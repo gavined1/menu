@@ -1,5 +1,23 @@
 import '@/styles/globals.css';
+import type { Metadata } from 'next';
+import { Kantumruy_Pro, Plus_Jakarta_Sans } from 'next/font/google';
 import localFont from 'next/font/local';
+
+// English font - Plus Jakarta Sans (modern, premium)
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-english',
+  display: 'swap',
+});
+
+// Khmer font - Kantumruy Pro (modern, clean)
+const kantumruy = Kantumruy_Pro({
+  subsets: ['khmer', 'latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-khmer',
+  display: 'swap',
+});
 
 const inter = localFont({
   src: [
@@ -50,9 +68,10 @@ const roboto_mono = localFont({
   display: 'swap',
 });
 
-export const metadata = {
-  title: 'Nextbase Open source starter',
-  description: 'Built with Next.js, Supabase, and Tailwind CSS',
+export const metadata: Metadata = {
+  title: 'MenuCraft - Digital Menus for Modern Restaurants',
+  description:
+    'Create beautiful digital menus for your restaurant. QR code ready, mobile-first, and easy to customize.',
 };
 
 export default async function RootLayout({
@@ -61,11 +80,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${roboto_mono.variable} ${kantumruy.variable} ${plusJakarta.variable}`}
+      data-scroll-behavior="smooth"
+    >
       <head />
-      <body>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

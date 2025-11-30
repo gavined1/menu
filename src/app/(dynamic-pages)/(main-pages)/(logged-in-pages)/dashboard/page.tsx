@@ -11,7 +11,8 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Welcome to your dashboard. This is your central hub for managing your digital menus.
+            Welcome to your dashboard. This is your central hub for managing
+            your digital menus.
           </p>
         </CardContent>
       </Card>

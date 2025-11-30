@@ -1,7 +1,6 @@
+'use server';
 
-'use server'
-
-import { createSupabaseClient } from "@/supabase-clients/server";
+import { createSupabaseClient } from '@/supabase-clients/server';
 
 export async function getLoggedInUserId() {
   const supabase = await createSupabaseClient();

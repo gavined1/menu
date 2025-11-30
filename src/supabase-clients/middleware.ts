@@ -50,7 +50,6 @@ export async function updateSession(request: NextRequest) {
   if (
     !user &&
     protectedPages.some((page) => {
-      // eslint-disable-next-line no-unexpected-multiline
       const matcher = match(page);
       return matcher(request.nextUrl.pathname);
     })

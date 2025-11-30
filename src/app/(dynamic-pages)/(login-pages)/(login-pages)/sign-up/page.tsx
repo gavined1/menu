@@ -6,9 +6,7 @@ const SearchParamsSchema = z.object({
   next: z.string().optional(),
 });
 
-async function SignUpWrapper(props: {
-  searchParams: Promise<unknown>;
-}) {
+async function SignUpWrapper(props: { searchParams: Promise<unknown> }) {
   const searchParams = await props.searchParams;
   const { next } = SearchParamsSchema.parse(searchParams);
   return <SignUp next={next} />;
@@ -17,7 +15,9 @@ async function SignUpWrapper(props: {
 export default async function SignUpPage(props: {
   searchParams: Promise<unknown>;
 }) {
-  return <Suspense>
-    <SignUpWrapper searchParams={props.searchParams} />
-  </Suspense>
+  return (
+    <Suspense>
+      <SignUpWrapper searchParams={props.searchParams} />
+    </Suspense>
+  );
 }

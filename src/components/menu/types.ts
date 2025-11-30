@@ -1,19 +1,22 @@
-import type { Database, Tables } from '@/lib/database.types';
+import type { Database } from '@/lib/database.types';
 
-export type MenuClient = Tables<'menu_clients'>;
-export type MenuCategory = Tables<'menu_categories'>;
-export type MenuItem = Tables<'menu_items'>;
-export type MenuFeaturedItem = Tables<'menu_featured_items'>;
+// Re-export data types from rsc-data for consistency
+export type {
+  FullMenuData,
+  MenuCategory,
+  MenuClient,
+  MenuFeaturedItem,
+  MenuItem,
+  MenuItemWithCategory,
+} from '@/rsc-data/menu/queries';
+
+// UI-specific types
 export type MenuItemBadgeType =
   Database['public']['Enums']['menu_item_badge_type'];
 
-export interface MenuItemWithCategory extends MenuItem {
-  category: Pick<MenuCategory, 'id' | 'name' | 'slug'> | null;
-}
+// Locale types
+export type MenuLocale = Database['public']['Enums']['menu_locale'];
+export type MenuCurrency = Database['public']['Enums']['menu_currency'];
 
-export interface MenuData {
-  client: MenuClient;
-  categories: MenuCategory[];
-  items: MenuItemWithCategory[];
-  featuredItems: MenuFeaturedItem[];
-}
+// Alias for component props (same as FullMenuData but named for clarity)
+export type { FullMenuData as MenuData } from '@/rsc-data/menu/queries';

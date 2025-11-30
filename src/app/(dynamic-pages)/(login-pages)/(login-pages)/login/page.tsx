@@ -7,9 +7,7 @@ const SearchParamsSchema = z.object({
   nextActionType: z.string().optional(),
 });
 
-async function LoginWrapper(props: {
-  searchParams: Promise<unknown>;
-}) {
+async function LoginWrapper(props: { searchParams: Promise<unknown> }) {
   const searchParams = await props.searchParams;
   const { next, nextActionType } = SearchParamsSchema.parse(searchParams);
   return <Login next={next} nextActionType={nextActionType} />;
@@ -18,7 +16,9 @@ async function LoginWrapper(props: {
 export default async function LoginPage(props: {
   searchParams: Promise<unknown>;
 }) {
-  return <Suspense>
-    <LoginWrapper searchParams={props.searchParams} />
-  </Suspense>
+  return (
+    <Suspense>
+      <LoginWrapper searchParams={props.searchParams} />
+    </Suspense>
+  );
 }

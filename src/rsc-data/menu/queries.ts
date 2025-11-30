@@ -1,14 +1,49 @@
+/**
+ * Menu Data Fetching (RSC)
+ *
+ * This module contains all Server Component data fetching functions for the menu feature.
+ * All functions use React's cache() for request deduplication and the public Supabase client.
+ *
+ * @module rsc-data/menu/queries
+ */
+
 import type { Tables } from '@/lib/database.types';
 import { createPublicSupabaseClient } from '@/supabase-clients/public';
 import { cache } from 'react';
+
+// ============================================
+// Type Exports
+// ============================================
 
 export type MenuClient = Tables<'menu_clients'>;
 export type MenuCategory = Tables<'menu_categories'>;
 export type MenuItem = Tables<'menu_items'>;
 export type MenuFeaturedItem = Tables<'menu_featured_items'>;
 
+export interface MenuItemWithCategory extends MenuItem {
+  category: Pick<
+    MenuCategory,
+    'id' | 'name' | 'name_km' | 'slug' | 'translations'
+  > | null;
+}
+
+export interface FullMenuData {
+  client: MenuClient;
+  categories: MenuCategory[];
+  items: MenuItemWithCategory[];
+  featuredItems: MenuFeaturedItem[];
+}
+
+// ============================================
+// Supabase Client
+// ============================================
+
 // Create a singleton instance for public data
 const getPublicSupabase = () => createPublicSupabaseClient();
+
+// ============================================
+// Query Functions
+// ============================================
 
 /**
  * Get a client by their slug
@@ -64,7 +99,7 @@ export const getMenuItems = cache(
       .select(
         `
       *,
-      category:menu_categories(id, name, slug)
+      category:menu_categories(id, name, name_km, slug, translations)
     `
       )
       .eq('client_id', clientId)
@@ -93,7 +128,7 @@ export const getMenuItems = cache(
       return [];
     }
 
-    return data;
+    return data as MenuItemWithCategory[];
   }
 );
 
@@ -120,24 +155,27 @@ export const getMenuFeaturedItems = cache(async (clientId: string) => {
 
 /**
  * Get all menu data for a client in a single call
+ * This is the primary function used by the menu page
  */
-export const getFullMenuData = cache(async (clientSlug: string) => {
-  const client = await getMenuClientBySlug(clientSlug);
+export const getFullMenuData = cache(
+  async (clientSlug: string): Promise<FullMenuData | null> => {
+    const client = await getMenuClientBySlug(clientSlug);
 
-  if (!client) {
-    return null;
+    if (!client) {
+      return null;
+    }
+
+    const [categories, items, featuredItems] = await Promise.all([
+      getMenuCategories(client.id),
+      getMenuItems(client.id),
+      getMenuFeaturedItems(client.id),
+    ]);
+
+    return {
+      client,
+      categories,
+      items,
+      featuredItems,
+    };
   }
-
-  const [categories, items, featuredItems] = await Promise.all([
-    getMenuCategories(client.id),
-    getMenuItems(client.id),
-    getMenuFeaturedItems(client.id),
-  ]);
-
-  return {
-    client,
-    categories,
-    items,
-    featuredItems,
-  };
-});
+);

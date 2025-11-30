@@ -1,8 +1,17 @@
 'use client';
 
-import { Clock, Facebook, Instagram, Mail, MapPin, Phone, X } from 'lucide-react';
+import {
+    Clock,
+    Facebook,
+    Instagram,
+    Mail,
+    MapPin,
+    Phone,
+    X,
+} from 'lucide-react';
 import Image from 'next/image';
 import { Drawer } from 'vaul';
+import { useMenuLocale, type TranslationKey } from './locale';
 import type { MenuClient } from './types';
 
 interface RestaurantInfoDrawerProps {
@@ -11,30 +20,42 @@ interface RestaurantInfoDrawerProps {
     onClose: () => void;
 }
 
-const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-const dayLabels: Record<string, string> = {
-    monday: 'Monday',
-    tuesday: 'Tuesday',
-    wednesday: 'Wednesday',
-    thursday: 'Thursday',
-    friday: 'Friday',
-    saturday: 'Saturday',
-    sunday: 'Sunday',
-};
+const dayOrder: TranslationKey[] = [
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday',
+];
 
 function getCurrentDay(): string {
-    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const days = [
+        'sunday',
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+    ];
     return days[new Date().getDay()];
 }
 
-export function RestaurantInfoDrawer({ client, isOpen, onClose }: RestaurantInfoDrawerProps) {
+export function RestaurantInfoDrawer({
+    client,
+    isOpen,
+    onClose,
+}: RestaurantInfoDrawerProps) {
+    const { t } = useMenuLocale();
     const openingHours = client.opening_hours as Record<string, string> | null;
     const socialLinks = client.social_links as Record<string, string> | null;
     const currentDay = getCurrentDay();
     const todayHours = openingHours?.[currentDay];
 
     return (
-        <Drawer.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <Drawer.Root open={isOpen} onOpenChange={(open) => !open && onClose()} modal>
             <Drawer.Portal>
                 <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />
                 <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-[2rem] bg-white max-h-[90vh] outline-none overflow-hidden">
@@ -45,6 +66,7 @@ export function RestaurantInfoDrawer({ client, isOpen, onClose }: RestaurantInfo
                                 src={client.cover_image_url}
                                 alt={client.name}
                                 fill
+                                sizes="100vw"
                                 className="object-cover"
                             />
                         ) : (
@@ -59,6 +81,7 @@ export function RestaurantInfoDrawer({ client, isOpen, onClose }: RestaurantInfo
                         <button
                             onClick={onClose}
                             className="absolute top-3 right-4 p-2 bg-black/30 backdrop-blur-sm rounded-full hover:bg-black/50 transition-colors"
+                            aria-label={t('close')}
                         >
                             <X className="w-5 h-5 text-white" />
                         </button>
@@ -102,7 +125,9 @@ export function RestaurantInfoDrawer({ client, isOpen, onClose }: RestaurantInfo
                                     <Clock className="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-emerald-600 font-medium">Open Today</p>
+                                    <p className="text-sm text-emerald-600 font-medium">
+                                        {t('today')}
+                                    </p>
                                     <p className="text-emerald-700 font-semibold">{todayHours}</p>
                                 </div>
                             </div>
@@ -123,18 +148,24 @@ export function RestaurantInfoDrawer({ client, isOpen, onClose }: RestaurantInfo
                                     className="flex-1 flex flex-col items-center gap-1.5 py-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors"
                                 >
                                     <Phone className="w-5 h-5 text-gray-600" />
-                                    <span className="text-sm font-medium text-gray-700">Call</span>
+                                    <span className="text-sm font-medium text-gray-700">
+                                        {t('contact')}
+                                    </span>
                                 </a>
                             )}
                             {client.address && (
                                 <a
-                                    href={`https://maps.google.com/?q=${encodeURIComponent(client.address + (client.city ? ', ' + client.city : ''))}`}
+                                    href={`https://maps.google.com/?q=${encodeURIComponent(
+                                        client.address + (client.city ? ', ' + client.city : '')
+                                    )}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex-1 flex flex-col items-center gap-1.5 py-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors"
                                 >
                                     <MapPin className="w-5 h-5 text-gray-600" />
-                                    <span className="text-sm font-medium text-gray-700">Directions</span>
+                                    <span className="text-sm font-medium text-gray-700">
+                                        {t('location')}
+                                    </span>
                                 </a>
                             )}
                         </div>
@@ -147,14 +178,19 @@ export function RestaurantInfoDrawer({ client, isOpen, onClose }: RestaurantInfo
                                         <MapPin className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
                                         <div>
                                             <p className="text-gray-900">{client.address}</p>
-                                            {client.city && <p className="text-gray-500 text-sm">{client.city}</p>}
+                                            {client.city && (
+                                                <p className="text-gray-500 text-sm">{client.city}</p>
+                                            )}
                                         </div>
                                     </div>
                                 )}
                                 {client.email && (
                                     <div className="flex items-center gap-3">
                                         <Mail className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                                        <a href={`mailto:${client.email}`} className="text-gray-900 hover:underline">
+                                        <a
+                                            href={`mailto:${client.email}`}
+                                            className="text-gray-900 hover:underline"
+                                        >
                                             {client.email}
                                         </a>
                                     </div>
@@ -194,22 +230,31 @@ export function RestaurantInfoDrawer({ client, isOpen, onClose }: RestaurantInfo
                         {openingHours && Object.keys(openingHours).length > 0 && (
                             <div className="space-y-3">
                                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                                    Opening Hours
+                                    {t('openingHours')}
                                 </h3>
                                 <div className="bg-gray-50 rounded-2xl overflow-hidden">
-                                    {dayOrder.map((day) => {
-                                        const hours = openingHours[day];
+                                    {dayOrder.map((dayKey, index) => {
+                                        const hours = openingHours[dayKey];
                                         if (!hours) return null;
-                                        const isToday = day === currentDay;
+                                        const isToday = dayKey === currentDay;
                                         return (
                                             <div
-                                                key={day}
-                                                className={`flex items-center justify-between px-4 py-3 ${isToday ? 'bg-emerald-50' : ''} ${day !== 'sunday' ? 'border-b border-gray-100' : ''}`}
+                                                key={dayKey}
+                                                className={`flex items-center justify-between px-4 py-3 ${isToday ? 'bg-emerald-50' : ''
+                                                    } ${index !== dayOrder.length - 1 ? 'border-b border-gray-100' : ''}`}
                                             >
-                                                <span className={`font-medium ${isToday ? 'text-emerald-700' : 'text-gray-600'}`}>
-                                                    {dayLabels[day]}
+                                                <span
+                                                    className={`font-medium ${isToday ? 'text-emerald-700' : 'text-gray-600'
+                                                        }`}
+                                                >
+                                                    {t(dayKey)}
                                                 </span>
-                                                <span className={`${isToday ? 'text-emerald-700 font-semibold' : 'text-gray-900'}`}>
+                                                <span
+                                                    className={`${isToday
+                                                        ? 'text-emerald-700 font-semibold'
+                                                        : 'text-gray-900'
+                                                        }`}
+                                                >
                                                     {hours}
                                                 </span>
                                             </div>

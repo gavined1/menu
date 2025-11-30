@@ -1,13 +1,15 @@
 'use server';
+
 import { actionClient } from '@/lib/safe-action';
 import { createSupabaseClient } from '@/supabase-clients/server';
 import { toSiteURL } from '@/utils/helpers';
-import { z } from 'zod';
-
-const signUpSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(3),
-});
+import {
+  resetPasswordSchema,
+  signInSchema,
+  signInWithMagicLinkSchema,
+  signInWithProviderSchema,
+  signUpSchema,
+} from '@/utils/zod-schemas';
 
 /**
  * Signs up a new user with email and password.
@@ -37,11 +39,6 @@ export const signUpAction = actionClient
     return data;
   });
 
-const signInSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
-});
-
 /**
  * Signs in a user with email and password.
  * @param {Object} params - The parameters for sign in.
@@ -65,11 +62,6 @@ export const signInWithPasswordAction = actionClient
 
     // No need to return anything if the operation is successful
   });
-
-const signInWithMagicLinkSchema = z.object({
-  email: z.string().email(),
-  next: z.string().optional(),
-});
 
 /**
  * Sends a magic link to the user's email for passwordless sign in.
@@ -100,11 +92,6 @@ export const signInWithMagicLinkAction = actionClient
     // No need to return anything if the operation is successful
   });
 
-const signInWithProviderSchema = z.object({
-  provider: z.enum(['google', 'github', 'twitter']),
-  next: z.string().optional(),
-});
-
 /**
  * Initiates OAuth sign in with a specified provider.
  * @param {Object} params - The parameters for OAuth sign in.
@@ -134,10 +121,6 @@ export const signInWithProviderAction = actionClient
 
     return { url: data.url };
   });
-
-const resetPasswordSchema = z.object({
-  email: z.string().email(),
-});
 
 /**
  * Initiates the password reset process for a user.

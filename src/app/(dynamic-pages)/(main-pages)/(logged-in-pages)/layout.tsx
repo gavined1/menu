@@ -2,7 +2,7 @@ import { Separator } from '@/components/ui/separator';
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { getCachedIsUserLoggedIn } from '@/rsc-data/supabase';
 import { redirect } from 'next/navigation';
