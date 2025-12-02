@@ -107,7 +107,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="#"
+                  href="/privacy"
                   className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
                 >
                   Privacy Policy
@@ -115,7 +115,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/terms"
                   className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
                 >
                   Terms of Service
@@ -131,21 +131,23 @@ const Footer = () => {
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <Link
-              href="#"
+              href="https://www.facebook.com/tangsoklim"
               className="text-slate-400 hover:text-slate-600 transition-colors"
               aria-label="Facebook"
             >
               <Facebook className="w-4 h-4" />
             </Link>
-            <Link
-              href="#"
+            <a
+              href="https://t.me/gavined"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-slate-400 hover:text-slate-600 transition-colors"
               aria-label="Telegram"
             >
               <Send className="w-4 h-4" />
-            </Link>
+            </a>
             <Link
-              href="#"
+              href="https://www.instagram.com/gaivned4"
               className="text-slate-400 hover:text-slate-600 transition-colors"
               aria-label="Instagram"
             >

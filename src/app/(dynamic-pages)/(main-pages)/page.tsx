@@ -1,6 +1,5 @@
 'use client';
 
-import { InteractiveGridPattern } from '@/components/ui/shadcn-io/interactive-grid-pattern';
 import { WarpBackground } from '@/components/ui/shadcn-io/warp-background';
 import { useTheme } from '@/stores/theme-store';
 import {
@@ -72,22 +71,6 @@ export default function LandingPage() {
             <div className="absolute top-2/3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent" />
           </>
         )}
-      </div>
-
-      {/* Interactive Grid Pattern - Separate layer for pointer events */}
-      <div className="fixed inset-0 z-0 overflow-hidden">
-        <InteractiveGridPattern
-          width={60}
-          height={60}
-          squares={[50, 40]}
-          className={`border-none [mask-image:radial-gradient(ellipse_at_center,black_25%,transparent_70%)] ${isDark ? 'opacity-50' : 'opacity-60'
-            }`}
-          squaresClassName={
-            isDark
-              ? 'stroke-indigo-400/20 hover:fill-indigo-400/35'
-              : 'stroke-slate-300/25 hover:fill-orange-200/35'
-          }
-        />
       </div>
 
       {/* Navigation */}
