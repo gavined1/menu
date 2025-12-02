@@ -28,9 +28,9 @@ export function MenuGrid({
     if (title?.startsWith('"')) {
       return title;
     }
-    // If no title or 'all', show translated "All Dishes"
+    // If no title or 'all', show translated "All Items"
     if (!title || activeCategory === 'all') {
-      return t('allDishes');
+      return t('allItems');
     }
     // If activeCategory is provided, find and localize category name
     if (activeCategory && categories) {

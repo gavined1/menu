@@ -44,6 +44,11 @@ export const useMenuLocaleStore = create<MenuLocaleStore>()(
     }),
     {
       name: 'menu-locale-storage',
+      // Only persist locale and currency, NOT customExchangeRate (comes from DB)
+      partialize: (state) => ({
+        locale: state.locale,
+        currency: state.currency,
+      }),
     }
   )
 );

@@ -117,17 +117,17 @@ export function MenuItemCard({ item, onItemClick }: MenuItemCardProps) {
           <span className="text-sm font-bold text-gray-900">
             {formatPrice(item.price)}
           </span>
-          {badgeInfo && BadgeIcon && (
-            <div
+        {badgeInfo && BadgeIcon && (
+          <div
               className={`px-1.5 py-0.5 rounded ${badgeInfo.bg} flex items-center gap-0.5`}
-            >
+          >
               <BadgeIcon className={`w-2.5 h-2.5 ${badgeInfo.color}`} />
               <span className={`text-[9px] font-semibold ${badgeInfo.color}`}>
                 {t(badgeInfo.labelKey)}
-              </span>
-            </div>
-          )}
-        </div>
+            </span>
+          </div>
+        )}
+      </div>
 
         {/* Name */}
         <h3 className="font-medium text-gray-900 text-[13px] leading-tight line-clamp-2 min-h-[2rem]">
@@ -137,23 +137,15 @@ export function MenuItemCard({ item, onItemClick }: MenuItemCardProps) {
         {/* Description */}
         <p className="text-[11px] text-gray-400 line-clamp-1 mt-0.5">
           {itemDescription || '\u00A0'}
-        </p>
+          </p>
 
-        {/* Rating & Category Row */}
+        {/* Category Row */}
         <div className="flex items-center gap-1.5 mt-auto pt-1 overflow-hidden">
-          {item.rating && (
-            <div className="flex items-center gap-0.5 flex-shrink-0">
-              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-              <span className="text-[10px] font-medium text-gray-600">
-                {item.rating}
-              </span>
-            </div>
-          )}
           {categoryName && (
             <span className="text-[10px] text-gray-400 truncate min-w-0">
               • {categoryName}
             </span>
-          )}
+            )}
         </div>
       </div>
     </div>

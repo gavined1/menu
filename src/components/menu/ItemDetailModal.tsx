@@ -3,6 +3,8 @@
 import {
   Calendar,
   ChefHat,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Flame,
   Leaf,
@@ -11,12 +13,15 @@ import {
   X,
 } from 'lucide-react';
 import Image from 'next/image';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Drawer } from 'vaul';
 import { useMenuLocale, type TranslationKey } from './locale';
-import type { MenuItemBadgeType, MenuItemWithCategory } from './types';
+import { ShareButton } from './ShareButton';
+import type { MenuClient, MenuItemBadgeType, MenuItemWithCategory } from './types';
 
 interface ItemDetailModalProps {
   item: MenuItemWithCategory | null;
+  client: MenuClient;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -77,10 +82,75 @@ const badgeConfig: Record<
 
 export function ItemDetailModal({
   item,
+  client,
   isOpen,
   onClose,
 }: ItemDetailModalProps) {
   const { t, formatPrice, getLocalizedText, getLocalizedDescription } = useMenuLocale();
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Get all images (prefer images array, fallback to single image_url)
+  const allImages = useMemo(() => {
+    if (!item) return [];
+    if (item.images && item.images.length > 0) {
+      return item.images;
+    }
+    if (item.image_url) {
+      return [item.image_url];
+    }
+    return [];
+  }, [item]);
+
+  const hasMultipleImages = allImages.length > 1;
+
+  // Reset index when item changes
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [item?.id]);
+
+  // Handle scroll to update active index - using onScroll prop instead
+  const handleCarouselScroll = useCallback(() => {
+    if (!hasMultipleImages) return;
+
+    const container = carouselRef.current;
+    if (!container) return;
+
+    const scrollLeft = container.scrollLeft;
+    const imageWidth = container.clientWidth;
+    if (imageWidth === 0) return;
+
+    const newIndex = Math.round(scrollLeft / imageWidth);
+    const clampedIndex = Math.max(0, Math.min(newIndex, allImages.length - 1));
+
+    if (clampedIndex !== activeImageIndex) {
+      setActiveImageIndex(clampedIndex);
+    }
+  }, [hasMultipleImages, allImages.length, activeImageIndex]);
+
+  const scrollToImage = useCallback((index: number) => {
+    const container = carouselRef.current;
+    if (!container) return;
+
+    const imageWidth = container.clientWidth;
+    container.scrollTo({
+      left: index * imageWidth,
+      behavior: 'smooth',
+    });
+  }, []);
+
+  const goToPrevious = useCallback(() => {
+    const newIndex = activeImageIndex > 0 ? activeImageIndex - 1 : allImages.length - 1;
+    setActiveImageIndex(newIndex);
+    scrollToImage(newIndex);
+  }, [activeImageIndex, allImages.length, scrollToImage]);
+
+  const goToNext = useCallback(() => {
+    const newIndex = activeImageIndex < allImages.length - 1 ? activeImageIndex + 1 : 0;
+    setActiveImageIndex(newIndex);
+    scrollToImage(newIndex);
+  }, [activeImageIndex, allImages.length, scrollToImage]);
 
   if (!item) return null;
 
@@ -92,52 +162,99 @@ export function ItemDetailModal({
     <Drawer.Root open={isOpen} onOpenChange={(open) => !open && onClose()} modal>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />
-        <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-[2rem] bg-white max-h-[92vh] outline-none overflow-hidden">
-          {/* Image - starts at the very top */}
-          <div className="relative aspect-square w-full flex-shrink-0 max-h-[45vh]">
-            {item.image_url ? (
-              <Image
-                src={item.image_url}
-                alt={itemName}
-                fill
-                sizes="100vw"
-                className="object-cover"
-              />
+        <Drawer.Content
+          className="fixed bottom-0 left-0 right-0 z-50 rounded-t-[2rem] bg-white outline-none overflow-hidden flex flex-col"
+          style={{ maxHeight: '92dvh', height: 'auto' }}
+        >
+          {/* Image Carousel - Responsive height */}
+          <div
+            className="relative w-full flex-shrink-0"
+            style={{ height: 'min(40dvh, 300px)' }}
+          >
+            {allImages.length > 0 ? (
+              <div
+                ref={carouselRef}
+                onScroll={handleCarouselScroll}
+                className="flex overflow-x-auto snap-x snap-mandatory w-full h-full scrollbar-hide"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {allImages.map((imageUrl, index) => (
+                  <div
+                    key={index}
+                    ref={(el) => {
+                      imageRefs.current[index] = el;
+                    }}
+                    className="flex-shrink-0 w-full h-full snap-center relative"
+                  >
+                    <Image
+                      src={imageUrl}
+                      alt={`${itemName} - ${index + 1}`}
+                      fill
+                      sizes="100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <span className="text-6xl">🍽️</span>
               </div>
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30 pointer-events-none" />
 
-            {/* Drag Handle - overlaid on image */}
+            {/* Drag Handle */}
             <div className="absolute top-3 left-1/2 -translate-x-1/2 h-1 w-10 rounded-full bg-white/50" />
 
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              className="absolute top-3 right-4 p-2 bg-black/30 backdrop-blur-sm rounded-full hover:bg-black/50 transition-colors"
-              aria-label={t('close')}
-            >
-              <X className="w-5 h-5 text-white" />
-            </button>
+            {/* Share & Close buttons */}
+            <div className="absolute top-3 right-4 flex items-center gap-2">
+              <ShareButton item={item} client={client} />
+              <button
+                onClick={onClose}
+                className="p-2 bg-black/30 backdrop-blur-sm rounded-full hover:bg-black/50 transition-colors"
+                aria-label={t('close')}
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
 
-            {/* Badges on image */}
-            {item.badges && item.badges.length > 0 && (
-              <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
-                {item.badges.map((badge) => {
-                  const config = badgeConfig[badge];
-                  const Icon = config.icon;
-                  return (
-                    <span
-                      key={badge}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-sm font-medium ${config.color}`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      {t(config.labelKey)}
-                    </span>
-                  );
-                })}
+            {/* Navigation arrows (only if multiple images) */}
+            {hasMultipleImages && (
+              <>
+                <button
+                  onClick={goToPrevious}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-black/30 backdrop-blur-sm rounded-full hover:bg-black/50 transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-5 h-5 text-white" />
+                </button>
+                <button
+                  onClick={goToNext}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-black/30 backdrop-blur-sm rounded-full hover:bg-black/50 transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-5 h-5 text-white" />
+                </button>
+              </>
+            )}
+
+            {/* Pagination dots (only if multiple images) */}
+            {hasMultipleImages && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {allImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setActiveImageIndex(index);
+                      scrollToImage(index);
+                    }}
+                    aria-label={`Go to image ${index + 1}`}
+                    className={`rounded-full transition-all duration-300 ${index === activeImageIndex
+                      ? 'w-6 h-1.5 bg-white'
+                      : 'w-1.5 h-1.5 bg-white/50'
+                      }`}
+                  />
+                ))}
               </div>
             )}
 
@@ -150,81 +267,64 @@ export function ItemDetailModal({
           </div>
 
           {/* Scrollable Content */}
-          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
-            {/* Header */}
-            <div className="space-y-1">
-              <Drawer.Title className="text-2xl font-bold text-gray-900">
-                {itemName}
-              </Drawer.Title>
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+            {/* Header Section */}
+            <div className="px-5 pt-4 pb-3">
+              {/* Category */}
               {categoryName && (
-                <Drawer.Description className="text-gray-500">
+                <Drawer.Description className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
                   {categoryName}
                 </Drawer.Description>
               )}
-            </div>
 
-            {/* Meta info */}
-            {(item.rating || item.prep_time_minutes) && (
-              <div className="flex items-center gap-3">
-                {item.rating && (
-                  <div className="flex items-center gap-2 bg-amber-50 text-amber-700 px-4 py-2.5 rounded-full">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    <span className="font-semibold">{item.rating}</span>
-                    {item.rating_count && (
-                      <span className="text-amber-600/70">
-                        ({item.rating_count}+)
-                      </span>
-                    )}
-                  </div>
-                )}
+              {/* Title */}
+              <Drawer.Title className="text-xl font-bold text-gray-900 leading-tight">
+                {itemName}
+              </Drawer.Title>
+
+              {/* Info Pills Row - Time, Badges */}
+              <div className="flex flex-wrap items-center gap-2 mt-3">
                 {item.prep_time_minutes && (
-                  <div className="flex items-center gap-2 bg-gray-100 text-gray-600 px-4 py-2.5 rounded-full">
-                    <Clock className="w-4 h-4" />
-                    <span className="font-medium">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full">
+                    <Clock className="w-3.5 h-3.5 text-gray-500" />
+                    <span className="text-sm font-medium text-gray-600">
                       {item.prep_time_minutes} {t('prepTime')}
                     </span>
                   </div>
                 )}
+                {/* Dietary Badges */}
+                {item.badges?.map((badge) => {
+                  const config = badgeConfig[badge];
+                  const Icon = config.icon;
+                  return (
+                    <div
+                      key={badge}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${config.bg} rounded-full`}
+                    >
+                      <Icon className={`w-3.5 h-3.5 ${config.color}`} />
+                      <span className={`text-sm font-medium ${config.color}`}>
+                        {t(config.labelKey)}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
-            )}
+            </div>
 
-            {/* Description */}
+            {/* Description Section */}
             {itemDescription && (
-              <div className="space-y-2">
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  {t('aboutThisDish')}
+              <div className="px-5 py-3 border-t border-gray-100">
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                  {t('aboutThisItem')}
                 </h3>
-                <p className="text-gray-700 leading-relaxed text-base">
+                <p className="text-gray-600 leading-relaxed">
                   {itemDescription}
                 </p>
               </div>
             )}
 
-            {/* Dietary info */}
-            {item.badges && item.badges.length > 0 && (
-              <div className="space-y-2 pt-2 border-t border-gray-100">
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  {t('dietaryInformation')}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {item.badges.map((badge) => {
-                    const config = badgeConfig[badge];
-                    const Icon = config.icon;
-                    return (
-                      <div
-                        key={badge}
-                        className={`inline-flex items-center gap-2 px-4 py-2.5 ${config.bg} rounded-xl`}
-                      >
-                        <Icon className={`w-5 h-5 ${config.color}`} />
-                        <span className={`font-medium ${config.color}`}>
-                          {t(config.labelKey)}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            {/* Bottom Padding - includes safe area for devices with home indicator */}
+            <div className="h-4 pb-safe" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }} />
           </div>
         </Drawer.Content>
       </Drawer.Portal>

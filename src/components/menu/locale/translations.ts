@@ -14,20 +14,24 @@ import type { SupportedLocale } from './i18n.config';
 const englishTranslations = {
   // Navigation
   menu: 'Menu',
+  catalog: 'Catalog',
   search: 'Search',
-  searchPlaceholder: 'Search dishes...',
+  searchPlaceholder: 'Search items...',
   filter: 'Filter',
   all: 'All',
-  allDishes: 'All Dishes',
+  allItems: 'All Items',
+  allDishes: 'All Items', // Legacy - kept for backward compatibility
 
   // Categories
   categories: 'Categories',
 
   // Item Details
-  aboutThisDish: 'About this dish',
-  dietaryInformation: 'Dietary Information',
+  aboutThisItem: 'About this item',
+  aboutThisDish: 'About this item', // Legacy - kept for backward compatibility
+  information: 'Information',
+  dietaryInformation: 'Tags', // Legacy - kept for backward compatibility
   prepTime: 'min',
-  rating: 'Rating',
+  duration: 'Duration',
 
   // Badges
   vegan: 'Vegan',
@@ -36,11 +40,12 @@ const englishTranslations = {
   glutenFree: 'Gluten Free',
   new: 'New',
   bestSeller: 'Popular',
-  chefSpecial: "Chef's Pick",
+  chefSpecial: 'Featured',
   seasonal: 'Seasonal',
 
-  // Restaurant Info
-  restaurantInfo: 'Restaurant Info',
+  // Business Info
+  businessInfo: 'Business Info',
+  restaurantInfo: 'Business Info', // Legacy - kept for backward compatibility
   openingHours: 'Opening Hours',
   location: 'Location',
   contact: 'Contact',
@@ -59,13 +64,19 @@ const englishTranslations = {
   // Actions
   close: 'Close',
   seeAll: 'See All',
+  share: 'Share',
+  shareItem: 'Share this item',
+  copyLink: 'Copy Link',
+  linkCopied: 'Link copied!',
+  shareVia: 'Share via',
+  askAboutItem: 'Ask about this item',
 
   // Currency & Language
   currency: 'Currency',
   language: 'Language',
 
   // Empty states
-  noResults: 'No dishes found',
+  noResults: 'No items found',
   noResultsDescription: 'Try adjusting your search or filter',
 } as const;
 
@@ -90,20 +101,24 @@ export const uiTranslations: Translations = {
   km: {
     // Navigation
     menu: 'មុខម្ហូប',
+    catalog: 'កាតាឡុក',
     search: 'ស្វែងរក',
-    searchPlaceholder: 'ស្វែងរកមុខម្ហូប...',
+    searchPlaceholder: 'ស្វែងរកម៉ឺនុយ...',
     filter: 'តម្រង',
     all: 'ទាំងអស់',
-    allDishes: 'មុខម្ហូបទាំងអស់',
+    allItems: 'ម៉ឺនុយទាំងអស់',
+    allDishes: 'ម៉ឺនុយទាំងអស់', // Legacy
 
     // Categories
     categories: 'ប្រភេទ',
 
     // Item Details
-    aboutThisDish: 'អំពីមុខម្ហូបនេះ',
-    dietaryInformation: 'ព័ត៌មានអាហារូបត្ថម្ភ',
+    aboutThisItem: 'អំពីម៉ឺនុយនេះ',
+    aboutThisDish: 'អំពីម៉ឺនុយនេះ', // Legacy
+    information: 'ព័ត៌មាន',
+    dietaryInformation: 'ស្លាក', // Legacy
     prepTime: 'នាទី',
-    rating: 'ការវាយតម្លៃ',
+    duration: 'រយៈពេល',
 
     // Badges
     vegan: 'វីហ្គេន',
@@ -112,11 +127,12 @@ export const uiTranslations: Translations = {
     glutenFree: 'គ្មានស្រួយ',
     new: 'ថ្មី',
     bestSeller: 'ពេញនិយម',
-    chefSpecial: 'ជម្រើសចុងភៅ',
+    chefSpecial: 'ពិសេស',
     seasonal: 'រដូវកាល',
 
-    // Restaurant Info
-    restaurantInfo: 'ព័ត៌មានភោជនីយដ្ឋាន',
+    // Business Info
+    businessInfo: 'ព័ត៌មានអាជីវកម្ម',
+    restaurantInfo: 'ព័ត៌មានអាជីវកម្ម', // Legacy
     openingHours: 'ម៉ោងបើក',
     location: 'ទីតាំង',
     contact: 'ទំនាក់ទំនង',
@@ -135,13 +151,19 @@ export const uiTranslations: Translations = {
     // Actions
     close: 'បិទ',
     seeAll: 'មើលទាំងអស់',
+    share: 'ចែករំលែក',
+    shareItem: 'ចែករំលែកម៉ឺនុយនេះ',
+    copyLink: 'ចម្លងតំណ',
+    linkCopied: 'បានចម្លងតំណ!',
+    shareVia: 'ចែករំលែកតាម',
+    askAboutItem: 'សួរអំពីម៉ឺនុយនេះ',
 
     // Currency & Language
     currency: 'រូបិយប័ណ្ណ',
     language: 'ភាសា',
 
     // Empty states
-    noResults: 'រកមិនឃើញមុខម្ហូប',
+    noResults: 'រកមិនឃើញវត្ថុ',
     noResultsDescription: 'សូមព្យាយាមកែសម្រួលការស្វែងរក',
   },
 

@@ -10,18 +10,23 @@ import {
 import { T } from '@/components/ui/Typography';
 import {
   ArrowRight,
+  Bus,
   ChefHat,
   Filter,
   Flame,
   Globe,
+  Hotel,
   Leaf,
   Palette,
   QrCode,
   Search,
+  ShoppingBag,
   Smartphone,
   Sparkles,
   Star,
+  Ticket,
   Utensils,
+  Wrench,
   Zap,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -77,21 +82,20 @@ export default function LandingPage() {
               className="mb-6 border-amber-300 bg-amber-50 px-4 py-1.5 text-amber-700"
             >
               <Sparkles className="mr-1.5 h-3.5 w-3.5" />
-              Digital Menu Platform for Modern Restaurants
+              Multi-Purpose Digital Catalog Platform
             </Badge>
 
             <T.H1 className="mb-6 text-4xl font-extrabold leading-[1.1] tracking-tight text-stone-900 sm:text-5xl md:text-6xl lg:text-7xl">
               Beautiful{' '}
               <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-                Digital Menus
+                Digital Catalogs
               </span>{' '}
-              for Your Restaurant
+              for Any Business
             </T.H1>
 
             <T.P className="mx-auto mb-8 max-w-2xl text-lg text-stone-600 md:text-xl">
-              Create stunning, mobile-first digital menus that delight your
-              customers. QR code ready, easy to update, and beautifully
-              designed.
+              Create stunning digital menus, product catalogs, service lists, or ticket boards.
+              Perfect for restaurants, transportation, retail, hotels, and more. QR code ready.
             </T.P>
 
             <div className="flex flex-wrap items-center justify-center gap-4">
@@ -233,6 +237,42 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Use Cases Section */}
+      <section className="py-16 bg-gradient-to-b from-white to-stone-50">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <Badge
+              variant="outline"
+              className="mb-4 border-purple-200 bg-purple-50 text-purple-700"
+            >
+              <Globe className="mr-1.5 h-3.5 w-3.5" />
+              Multi-Purpose Platform
+            </Badge>
+            <T.H2 className="mb-4 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+              Built for Every Business
+            </T.H2>
+            <T.P className="text-lg text-stone-600">
+              One platform, endless possibilities. Create digital catalogs for any industry.
+            </T.P>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            {useCases.map((useCase, index) => (
+              <div
+                key={index}
+                className="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white p-6 text-center transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-200/50"
+              >
+                <div className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ${useCase.bgColor} transition-transform group-hover:scale-110`}>
+                  {useCase.icon}
+                </div>
+                <h3 className="mb-1 font-semibold text-stone-900">{useCase.title}</h3>
+                <p className="text-sm text-stone-500">{useCase.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-20 md:py-28">
         <div className="container mx-auto px-4 md:px-6">
@@ -245,11 +285,11 @@ export default function LandingPage() {
               Powerful Features
             </Badge>
             <T.H2 className="mb-4 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
-              Everything You Need for Digital Menus
+              Everything You Need for Digital Catalogs
             </T.H2>
             <T.P className="text-lg text-stone-600">
               Built with modern technology to provide the best experience for
-              you and your customers.
+              any business and their customers.
             </T.P>
           </div>
 
@@ -362,7 +402,7 @@ export default function LandingPage() {
               Get Started in Minutes
             </T.H2>
             <T.P className="text-lg text-stone-600">
-              Create your digital menu and share it with customers in three easy
+              Create your digital catalog and share it with customers in three easy
               steps.
             </T.P>
           </div>
@@ -375,19 +415,16 @@ export default function LandingPage() {
               {steps.map((step, index) => (
                 <div
                   key={index}
-                  className={`relative flex flex-col items-center gap-6 md:flex-row ${
-                    index % 2 === 1 ? 'md:flex-row-reverse' : ''
-                  }`}
+                  className={`relative flex flex-col items-center gap-6 md:flex-row ${index % 2 === 1 ? 'md:flex-row-reverse' : ''
+                    }`}
                 >
                   <div
-                    className={`flex-1 ${
-                      index % 2 === 1 ? 'md:text-right' : ''
-                    }`}
+                    className={`flex-1 ${index % 2 === 1 ? 'md:text-right' : ''
+                      }`}
                   >
                     <div
-                      className={`inline-flex items-center gap-2 ${
-                        index % 2 === 1 ? 'md:flex-row-reverse' : ''
-                      }`}
+                      className={`inline-flex items-center gap-2 ${index % 2 === 1 ? 'md:flex-row-reverse' : ''
+                        }`}
                     >
                       <span className="text-sm font-bold text-amber-600">
                         Step {index + 1}
@@ -423,10 +460,10 @@ export default function LandingPage() {
         <div className="container relative mx-auto px-4 md:px-6">
           <div className="mx-auto max-w-3xl text-center">
             <T.H2 className="mb-6 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl">
-              Ready to Modernize Your Menu?
+              Ready to Go Digital?
             </T.H2>
             <T.P className="mx-auto mb-8 max-w-2xl text-lg text-white/90">
-              Join restaurants worldwide using digital menus to enhance their
+              Join thousands of businesses worldwide using digital catalogs to enhance their
               customer experience. Start free, upgrade anytime.
             </T.P>
             <div className="flex flex-wrap items-center justify-center gap-4">
@@ -457,47 +494,86 @@ export default function LandingPage() {
 }
 
 const stats = [
-  { value: '10K+', label: 'Menus Created' },
-  { value: '500+', label: 'Restaurants' },
+  { value: '10K+', label: 'Catalogs Created' },
+  { value: '500+', label: 'Businesses' },
   { value: '99.9%', label: 'Uptime' },
   { value: '4.9★', label: 'Rating' },
+];
+
+const useCases = [
+  {
+    title: 'Restaurants',
+    description: 'Digital menus',
+    icon: <Utensils className="h-6 w-6 text-amber-600" />,
+    bgColor: 'bg-amber-100',
+  },
+  {
+    title: 'Transportation',
+    description: 'Tickets & routes',
+    icon: <Bus className="h-6 w-6 text-blue-600" />,
+    bgColor: 'bg-blue-100',
+  },
+  {
+    title: 'Retail',
+    description: 'Product catalogs',
+    icon: <ShoppingBag className="h-6 w-6 text-emerald-600" />,
+    bgColor: 'bg-emerald-100',
+  },
+  {
+    title: 'Hotels',
+    description: 'Room & services',
+    icon: <Hotel className="h-6 w-6 text-purple-600" />,
+    bgColor: 'bg-purple-100',
+  },
+  {
+    title: 'Events',
+    description: 'Tickets & shows',
+    icon: <Ticket className="h-6 w-6 text-pink-600" />,
+    bgColor: 'bg-pink-100',
+  },
+  {
+    title: 'Services',
+    description: 'Service listings',
+    icon: <Wrench className="h-6 w-6 text-slate-600" />,
+    bgColor: 'bg-slate-100',
+  },
 ];
 
 const features = [
   {
     title: 'Mobile-First Design',
     description:
-      'Optimized for smartphones with smooth scrolling, touch gestures, and fast loading. Your menu looks stunning on any device.',
+      'Optimized for smartphones with smooth scrolling, touch gestures, and fast loading. Your catalog looks stunning on any device.',
     icon: <Smartphone className="h-6 w-6 text-amber-600" />,
   },
   {
     title: 'Smart Search & Filter',
     description:
-      'Customers can easily find dishes by name, category, or dietary preferences. Filter by vegan, spicy, gluten-free, and more.',
+      'Customers can easily find items by name, category, or tags. Powerful filtering makes browsing effortless.',
     icon: <Search className="h-6 w-6 text-amber-600" />,
   },
   {
-    title: 'Dietary Badges',
+    title: 'Custom Badges & Tags',
     description:
-      'Highlight important dietary information with beautiful badges. Vegan, vegetarian, spicy, gluten-free, and chef specials.',
+      'Highlight important information with beautiful badges. Mark items as new, popular, on sale, or with any custom tag.',
     icon: <Leaf className="h-6 w-6 text-amber-600" />,
   },
   {
-    title: 'Category Management',
+    title: 'Flexible Categories',
     description:
-      'Organize your menu into clear categories. Customers can browse by Appetizers, Main Courses, Desserts, Drinks, and more.',
+      'Organize your catalog into clear categories. Works for menu sections, product types, routes, services, and more.',
     icon: <Filter className="h-6 w-6 text-amber-600" />,
   },
   {
     title: 'Brand Customization',
     description:
-      'Match your restaurant brand with custom colors, logos, and styling. Create a consistent experience for your customers.',
+      'Match your brand with custom colors, logos, and styling. Create a consistent experience for your customers.',
     icon: <Palette className="h-6 w-6 text-amber-600" />,
   },
   {
-    title: 'Multi-Location Support',
+    title: 'Multi-Language Support',
     description:
-      'Perfect for restaurant chains. Each location gets its own branded menu with centralized management.',
+      'Reach a global audience with built-in multi-language support. Switch between languages with one tap.',
     icon: <Globe className="h-6 w-6 text-amber-600" />,
   },
 ];
@@ -513,21 +589,21 @@ const demoFeatures = [
 
 const steps = [
   {
-    title: 'Create Your Menu',
+    title: 'Create Your Catalog',
     description:
-      'Sign up and add your restaurant details, categories, and menu items with photos and descriptions.',
+      'Sign up and add your business details, categories, and items with photos and descriptions.',
     icon: <ChefHat className="h-7 w-7 text-white" />,
   },
   {
     title: 'Customize Your Brand',
     description:
-      'Upload your logo, set your brand colors, and personalize the look and feel of your digital menu.',
+      'Upload your logo, set your brand colors, and personalize the look and feel of your digital catalog.',
     icon: <Palette className="h-7 w-7 text-white" />,
   },
   {
     title: 'Share with Customers',
     description:
-      'Generate a QR code or share your unique link. Customers can access your menu instantly on any device.',
+      'Generate a QR code or share your unique link. Customers can access your catalog instantly on any device.',
     icon: <QrCode className="h-7 w-7 text-white" />,
   },
 ];

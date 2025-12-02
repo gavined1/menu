@@ -44,7 +44,7 @@ export function MenuNavbar({ client, onInfoClick }: MenuNavbarProps) {
       {/* Language Switcher - Left */}
       <LanguageSwitcher />
 
-      {/* Restaurant Name - Center */}
+      {/* Business Name - Center */}
       <button
         onClick={(e) => {
           // Blur to prevent aria-hidden conflict when drawer opens

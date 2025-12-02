@@ -204,19 +204,19 @@ const Footer = () => {
               className="text-xs text-stone-500 hover:text-amber-600 transition-colors"
             >
               Privacy
-            </Link>
+              </Link>
             <Link
               href="#"
               className="text-xs text-stone-500 hover:text-amber-600 transition-colors"
             >
               Terms
-            </Link>
+              </Link>
             <Link
               href="#"
               className="text-xs text-stone-500 hover:text-amber-600 transition-colors"
             >
               Cookies
-            </Link>
+              </Link>
           </div>
         </div>
       </div>

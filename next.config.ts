@@ -1,7 +1,8 @@
-import { NextConfig } from "next";
+import { NextConfig } from 'next';
 
 const config: NextConfig = {
   cacheComponents: true,
+  allowedDevOrigins: ['192.168.1.12'],
   images: {
     remotePatterns: [
       {
@@ -25,6 +26,5 @@ const config: NextConfig = {
     ],
   },
 };
-
 
 export default config;

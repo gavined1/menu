@@ -1,6 +1,7 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { HeroCarousel } from './HeroCarousel';
 import { ItemDetailModal } from './ItemDetailModal';
 import { MenuLocaleProvider, useMenuLocale } from './locale';
@@ -17,7 +18,7 @@ interface DigitalMenuProps {
 export function DigitalMenu({ data }: DigitalMenuProps) {
   const { client, categories, items, featuredItems } = data;
 
-  // Custom exchange rate from restaurant settings (if any)
+  // Custom exchange rate from business settings (if any)
   const customExchangeRate = client.exchange_rate ?? undefined;
 
   return (
@@ -40,6 +41,7 @@ function DigitalMenuContent({
   featuredItems,
 }: MenuData) {
   const { locale } = useMenuLocale();
+  const searchParams = useSearchParams();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedItem, setSelectedItem] = useState<MenuItemWithCategory | null>(
@@ -47,6 +49,20 @@ function DigitalMenuContent({
   );
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
   const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false);
+
+  // Deep link: Open item modal if ?item=slug is in URL
+  useEffect(() => {
+    const itemSlug = searchParams.get('item');
+    if (itemSlug) {
+      const item = (items as MenuItemWithCategory[]).find(
+        (i) => i.slug === itemSlug
+      );
+      if (item) {
+        setSelectedItem(item);
+        setIsItemModalOpen(true);
+      }
+    }
+  }, [searchParams, items]);
 
   const filteredItems = useMemo(() => {
     let filtered = items as MenuItemWithCategory[];
@@ -85,11 +101,23 @@ function DigitalMenuContent({
   const handleItemClick = useCallback((item: MenuItemWithCategory) => {
     setSelectedItem(item);
     setIsItemModalOpen(true);
+
+    // Update URL with item slug for sharing (client-side only, no server request)
+    const url = new URL(window.location.href);
+    url.searchParams.set('item', item.slug);
+    window.history.replaceState(null, '', url.pathname + url.search);
   }, []);
 
   const handleCloseItemModal = useCallback(() => {
     setIsItemModalOpen(false);
     setTimeout(() => setSelectedItem(null), 300);
+
+    // Remove ?item= from URL when closing modal (client-side only, no server request)
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('item')) {
+      url.searchParams.delete('item');
+      window.history.replaceState(null, '', url.pathname + url.search);
+    }
   }, []);
 
   const handleOpenInfoDrawer = useCallback(() => {
@@ -106,7 +134,7 @@ function DigitalMenuContent({
       return `"${searchQuery}"`;
     }
     if (activeCategory === 'all') {
-      return null; // Will use t('allDishes') in MenuGrid
+      return null; // Will use t('allItems') in MenuGrid
     }
     return activeCategory; // Pass category slug, will be localized in MenuGrid
   }, [activeCategory, searchQuery]);
@@ -144,6 +172,7 @@ function DigitalMenuContent({
       <div className={locale === 'km' ? 'font-khmer' : 'font-menu'}>
         <ItemDetailModal
           item={selectedItem}
+          client={client}
           isOpen={isItemModalOpen}
           onClose={handleCloseItemModal}
         />

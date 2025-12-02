@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import {
     formatPrice as formatPriceHelper,
     getExchangeRate,
@@ -32,9 +32,8 @@ export function MenuLocaleProvider({
     }, []);
 
     useEffect(() => {
-        if (customExchangeRate !== undefined) {
-            setCustomExchangeRate(customExchangeRate);
-        }
+        // Always update - use null when undefined to clear any stored value
+        setCustomExchangeRate(customExchangeRate ?? null);
     }, [customExchangeRate, setCustomExchangeRate]);
 
     if (!hydrated) {
@@ -42,7 +41,7 @@ export function MenuLocaleProvider({
             <div className="min-h-screen bg-white">
                 <div className="animate-pulse">
                     <div className="h-14" />
-                    <div className="aspect-[4/3] sm:aspect-[16/9] bg-gray-100" />
+                    <div className="aspect-[4/3] sm:aspect-[16/9] bg-gray-100 rounded-b-3xl" />
                     <div className="p-5 space-y-4">
                         <div className="h-12 bg-gray-100 rounded-2xl" />
                         <div className="flex gap-3 overflow-hidden">
@@ -72,27 +71,17 @@ export function useMenuLocale() {
 
     const exchangeRate = getExchangeRate(currency, customExchangeRate);
 
-    const t = useCallback(
-        (key: TranslationKey) => tHelper(key, locale),
-        [locale]
-    );
+    // Direct function calls to ensure re-render on state change
+    const t = (key: TranslationKey) => tHelper(key, locale);
 
-    const formatPrice = useCallback(
-        (priceUSD: number) => formatPriceHelper(priceUSD, currency, locale, customExchangeRate),
-        [currency, locale, customExchangeRate]
-    );
+    const formatPrice = (priceUSD: number) =>
+        formatPriceHelper(priceUSD, currency, locale, customExchangeRate);
 
-    const getLocalizedText = useCallback(
-        (item: { name: string; name_km?: string | null; translations?: unknown }) =>
-            getLocalizedTextHelper(item, locale),
-        [locale]
-    );
+    const getLocalizedText = (item: { name: string; name_km?: string | null; translations?: unknown }) =>
+        getLocalizedTextHelper(item, locale);
 
-    const getLocalizedDescription = useCallback(
-        (item: { description?: string | null; description_km?: string | null; translations?: unknown }) =>
-            getLocalizedDescriptionHelper(item, locale),
-        [locale]
-    );
+    const getLocalizedDescription = (item: { description?: string | null; description_km?: string | null; translations?: unknown }) =>
+        getLocalizedDescriptionHelper(item, locale);
 
     return {
         locale,
