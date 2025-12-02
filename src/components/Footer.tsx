@@ -91,7 +91,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="https://gavined.com"
                   className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
                 >
                   Blog
