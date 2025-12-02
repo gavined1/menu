@@ -37,9 +37,9 @@ export function MenuNavbar({ client, onInfoClick }: MenuNavbarProps) {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 transition-all duration-300 ${isVisible
-        ? 'opacity-100 translate-y-0'
-        : 'opacity-0 -translate-y-full pointer-events-none'
-        }`}
+          ? 'opacity-100 translate-y-0'
+          : 'opacity-0 -translate-y-full pointer-events-none'
+      }`}
     >
       {/* Language Switcher - Left */}
       <LanguageSwitcher />

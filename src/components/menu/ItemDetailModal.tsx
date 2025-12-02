@@ -186,13 +186,13 @@ export function ItemDetailModal({
                     }}
                     className="flex-shrink-0 w-full h-full snap-center relative"
                   >
-                    <Image
+              <Image
                       src={imageUrl}
                       alt={`${itemName} - ${index + 1}`}
-                      fill
+                fill
                       sizes="100vw"
-                      className="object-cover"
-                    />
+                className="object-cover"
+              />
                   </div>
                 ))}
               </div>
@@ -209,13 +209,13 @@ export function ItemDetailModal({
             {/* Share & Close buttons */}
             <div className="absolute top-3 right-4 flex items-center gap-2">
               <ShareButton item={item} client={client} />
-              <button
-                onClick={onClose}
+            <button
+              onClick={onClose}
                 className="p-2 bg-black/30 backdrop-blur-sm rounded-full hover:bg-black/50 transition-colors"
                 aria-label={t('close')}
-              >
-                <X className="w-5 h-5 text-white" />
-              </button>
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
             </div>
 
             {/* Navigation arrows (only if multiple images) */}
@@ -232,7 +232,7 @@ export function ItemDetailModal({
                   onClick={goToNext}
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-black/30 backdrop-blur-sm rounded-full hover:bg-black/50 transition-colors"
                   aria-label="Next image"
-                >
+                    >
                   <ChevronRight className="w-5 h-5 text-white" />
                 </button>
               </>
@@ -294,21 +294,21 @@ export function ItemDetailModal({
                 )}
                 {/* Dietary Badges */}
                 {item.badges?.map((badge) => {
-                  const config = badgeConfig[badge];
-                  const Icon = config.icon;
-                  return (
-                    <div
-                      key={badge}
+                    const config = badgeConfig[badge];
+                    const Icon = config.icon;
+                    return (
+                      <div
+                        key={badge}
                       className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${config.bg} rounded-full`}
-                    >
+                      >
                       <Icon className={`w-3.5 h-3.5 ${config.color}`} />
                       <span className={`text-sm font-medium ${config.color}`}>
                         {t(config.labelKey)}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
             </div>
 
             {/* Description Section */}

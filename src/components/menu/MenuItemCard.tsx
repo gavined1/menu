@@ -144,7 +144,7 @@ export function MenuItemCard({ item, onItemClick }: MenuItemCardProps) {
           {categoryName && (
             <span className="text-[10px] text-gray-400 truncate min-w-0">
               • {categoryName}
-            </span>
+          </span>
             )}
         </div>
       </div>

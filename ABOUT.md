@@ -7,7 +7,9 @@ Angkor Menu is a modern, mobile-first digital catalog platform designed to help 
 ## 🌟 Why Angkor Menu?
 
 ### The Problem
+
 Traditional paper menus and catalogs are:
+
 - Expensive to print and update
 - Not eco-friendly
 - Difficult to share remotely
@@ -15,7 +17,9 @@ Traditional paper menus and catalogs are:
 - Not searchable or filterable
 
 ### Our Solution
+
 Angkor Menu transforms how businesses present their offerings:
+
 - **Instant updates** - Change prices, add items, or update descriptions in real-time
 - **Zero printing costs** - Go paperless and save money
 - **Easy sharing** - One QR code or link to share your entire catalog
@@ -27,18 +31,21 @@ Angkor Menu transforms how businesses present their offerings:
 ## ✨ Features
 
 ### 📱 Mobile-First Design
+
 - Optimized for smartphones - where 80% of customers browse
 - Native-like experience with smooth animations
 - Touch-friendly interface with swipe gestures
 - Fast loading even on slow connections
 
 ### 🌐 Multi-Language Support
+
 - **English** - Default language
 - **Khmer (ខ្មែរ)** - Native Cambodian language support
 - Easy to add more languages
 - Remembers user's language preference
 
 ### 💰 Multi-Currency Display
+
 - **USD ($)** - US Dollar
 - **KHR (៛)** - Cambodian Riel
 - Automatic currency conversion
@@ -46,18 +53,22 @@ Angkor Menu transforms how businesses present their offerings:
 - Remembers user's currency preference
 
 ### 🖼️ Beautiful Visual Experience
+
 - **Hero Carousel** - Showcase featured items with stunning banners
 - **Image Galleries** - Multiple photos per item
 - **Smooth Animations** - Polished micro-interactions
 - **Custom Branding** - Colors and themes per business
 
 ### 🔍 Smart Search & Filter
+
 - **Instant Search** - Find items as you type
 - **Category Filters** - Browse by category
 - **Expandable Search Bar** - Clean, minimal interface
 
 ### 📤 Social Sharing
+
 Share any item directly to:
+
 - WhatsApp
 - Telegram
 - Facebook
@@ -66,11 +77,13 @@ Share any item directly to:
 - Copy link
 
 ### 🔗 Deep Linking
+
 - Each item has a unique shareable URL
 - Opening a shared link shows the item immediately
 - Perfect for customer inquiries and orders
 
 ### 🏷️ Item Badges & Tags
+
 - **New** - Highlight new arrivals
 - **Best Seller** - Mark popular items
 - **Chef Special** - Featured recommendations
@@ -78,6 +91,7 @@ Share any item directly to:
 - **Dietary Tags** - Vegan, Vegetarian, Spicy, Gluten-free
 
 ### 📊 Rich Item Details
+
 - High-quality images (single or gallery)
 - Detailed descriptions
 - Pricing with currency conversion
@@ -85,6 +99,7 @@ Share any item directly to:
 - Category organization
 
 ### 🏢 Business Information
+
 - Business name and logo
 - Contact information (phone, email)
 - Address and location
@@ -96,36 +111,42 @@ Share any item directly to:
 ## 🏪 Use Cases
 
 ### 🍽️ Restaurants & Cafes
+
 - Digital food menus
 - Daily specials and promotions
 - QR codes on tables
 - Contactless ordering support
 
 ### 🛍️ Retail Stores
+
 - Product catalogs
 - New arrivals showcase
 - Price lists
 - Inventory display
 
 ### 🚌 Transportation Services
+
 - Route information
 - Ticket prices
 - Schedule displays
 - Service descriptions
 
 ### 🏨 Hotels & Resorts
+
 - Room catalogs
 - Amenity listings
 - Service menus
 - Facility information
 
 ### 💇 Service Businesses
+
 - Service menus
 - Price lists
 - Package offerings
 - Appointment information
 
 ### 🎫 Events & Entertainment
+
 - Event listings
 - Ticket information
 - Show schedules
@@ -136,24 +157,28 @@ Share any item directly to:
 ## 🛠️ Technical Highlights
 
 ### Performance
+
 - ⚡ Server-side rendering for fast initial load
 - 🖼️ Optimized images with Next.js Image
 - 📦 Code splitting and lazy loading
 - 🗄️ Efficient database queries
 
 ### Security
+
 - 🔐 Row Level Security (RLS) on all tables
 - 🛡️ Secure function execution paths
 - ✅ Input validation with Zod
 - 🔒 HTTPS everywhere
 
 ### SEO & Social
+
 - 📈 Dynamic Open Graph meta tags
 - 🐦 Twitter Card support
 - 🔍 Search engine optimized
 - 📱 Rich link previews when sharing
 
 ### Accessibility
+
 - ♿ ARIA labels and roles
 - ⌨️ Keyboard navigation
 - 📖 Screen reader friendly
@@ -164,6 +189,7 @@ Share any item directly to:
 ## 🗺️ Roadmap
 
 ### Coming Soon
+
 - [ ] Online ordering integration
 - [ ] Payment gateway support
 - [ ] Analytics dashboard
@@ -174,6 +200,7 @@ Share any item directly to:
 - [ ] Push notifications
 
 ### Future Plans
+
 - [ ] Mobile apps (iOS/Android)
 - [ ] POS system integration
 - [ ] AI-powered recommendations
@@ -191,10 +218,9 @@ Angkor Menu is proudly built in Cambodia 🇰🇭, designed to serve businesses 
 ## 📞 Contact Us
 
 - **Website**: [angkormenu.com](https://angkormenu.com)
-- **Email**: support@angkormenu.com
+- **Email**: hello@gavined.com
 - **Location**: Phnom Penh, Cambodia
 
 ---
 
 © 2025 Angkor Menu. All rights reserved.
-

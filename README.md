@@ -166,7 +166,7 @@ Contributions are welcome! Please open an issue or submit a pull request.
 ## 📞 Support
 
 - Website: [angkormenu.com](https://angkormenu.com)
-- Email: support@angkormenu.com
+- Email: hello@gavined.com
 
 ---
 

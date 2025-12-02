@@ -83,7 +83,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="mailto:support@angkormenu.com"
+                  href="mailto:hello@gavined.com"
                   className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
                 >
                   Contact
