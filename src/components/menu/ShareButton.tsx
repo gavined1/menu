@@ -110,33 +110,32 @@ export function ShareButton({ item, client, className = '' }: ShareButtonProps) 
         }
     }, [itemName, shareMessage, shareUrl]);
 
-    // Share to WhatsApp
+    // Share to WhatsApp - combines text and URL in one message
     const handleWhatsApp = useCallback(() => {
-        const text = encodeURIComponent(`${shareMessage}\n${shareUrl}`);
+        const text = encodeURIComponent(`${shareMessage}\n\n${shareUrl}`);
         window.open(`https://wa.me/?text=${text}`, '_blank');
         setIsOpen(false);
     }, [shareMessage, shareUrl]);
 
-    // Share to Telegram
+    // Share to Telegram - only use URL, let the preview show the content
+    // Telegram auto-generates preview from Open Graph meta tags
     const handleTelegram = useCallback(() => {
-        const text = encodeURIComponent(shareMessage);
         const url = encodeURIComponent(shareUrl);
-        window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+        window.open(`https://t.me/share/url?url=${url}`, '_blank');
         setIsOpen(false);
-    }, [shareMessage, shareUrl]);
+    }, [shareUrl]);
 
-    // Share to Facebook
+    // Share to Facebook - only URL, Facebook uses Open Graph for preview
     const handleFacebook = useCallback(() => {
         const url = encodeURIComponent(shareUrl);
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
         setIsOpen(false);
     }, [shareUrl]);
 
-    // Share to Messenger
+    // Share to Messenger - only URL, Messenger uses Open Graph for preview
     const handleMessenger = useCallback(() => {
         const url = encodeURIComponent(shareUrl);
-        // Works on mobile (opens Messenger app) and desktop (opens messenger.com)
-        window.open(`https://www.messenger.com/t/?link=${url}`, '_blank');
+        window.open(`https://www.facebook.com/dialog/send?link=${url}&redirect_uri=${encodeURIComponent(shareUrl)}`, '_blank');
         setIsOpen(false);
     }, [shareUrl]);
 

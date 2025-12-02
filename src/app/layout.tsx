@@ -3,20 +3,22 @@ import type { Metadata } from 'next';
 import { Kantumruy_Pro, Plus_Jakarta_Sans } from 'next/font/google';
 import localFont from 'next/font/local';
 
-// English font - Plus Jakarta Sans (modern, premium)
+// English font - Plus Jakarta Sans (modern, premium) - used in menu pages
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-english',
   display: 'swap',
+  preload: false, // Don't preload - loaded on-demand when menu pages are visited
 });
 
-// Khmer font - Kantumruy Pro (modern, clean)
+// Khmer font - Kantumruy Pro (modern, clean) - used in menu pages
 const kantumruy = Kantumruy_Pro({
   subsets: ['khmer', 'latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-khmer',
   display: 'swap',
+  preload: false, // Don't preload - loaded on-demand when Khmer is selected
 });
 
 const inter = localFont({
