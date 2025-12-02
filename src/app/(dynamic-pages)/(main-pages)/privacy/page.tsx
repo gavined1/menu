@@ -205,7 +205,7 @@ export default function PrivacyPolicyPage() {
 
                     <div className="border-t border-slate-200 pt-8 mt-12">
                         <p className="text-slate-500 text-sm">
-                            © {new Date().getFullYear()} Angkor Menu. All rights reserved.
+                            © 2025 Angkor Menu. All rights reserved.
                         </p>
                     </div>
                 </div>
