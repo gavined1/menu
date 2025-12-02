@@ -2,7 +2,7 @@ import { NextConfig } from 'next';
 
 const config: NextConfig = {
   cacheComponents: true,
-  allowedDevOrigins: ['192.168.1.12'],
+  allowedDevOrigins: ['192.168.8.113'],
   images: {
     remotePatterns: [
       {
