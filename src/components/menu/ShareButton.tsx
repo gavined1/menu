@@ -30,12 +30,6 @@ export function ShareButton({ item, client, className = '' }: ShareButtonProps) 
         return `${window.location.origin}/menu/${client.slug}?item=${item.slug}`;
     }, [client.slug, item.slug]);
 
-    // Generate share message
-    const shareMessage = useMemo(() => {
-        const price = item.price ? ` - $${item.price}` : '';
-        return `${itemName}${price}\n${client.name}`;
-    }, [itemName, item.price, client.name]);
-
     // Copy to clipboard using multiple methods
     const copyToClipboard = useCallback(async (text: string): Promise<boolean> => {
         // Method 1: Modern Clipboard API (works on HTTPS)
@@ -90,11 +84,9 @@ export function ShareButton({ item, client, className = '' }: ShareButtonProps) 
         }
     }, [shareUrl, copyToClipboard, t]);
 
-    // Native share (mobile)
+    // Native share (mobile) - just URL, let preview do the work
     const handleNativeShare = useCallback(async () => {
         const shareData = {
-            title: itemName,
-            text: shareMessage,
             url: shareUrl,
         };
 
@@ -108,14 +100,14 @@ export function ShareButton({ item, client, className = '' }: ShareButtonProps) 
                 }
             }
         }
-    }, [itemName, shareMessage, shareUrl]);
+    }, [shareUrl]);
 
-    // Share to WhatsApp - combines text and URL in one message
+    // Share to WhatsApp - just URL, WhatsApp generates preview from Open Graph
     const handleWhatsApp = useCallback(() => {
-        const text = encodeURIComponent(`${shareMessage}\n\n${shareUrl}`);
-        window.open(`https://wa.me/?text=${text}`, '_blank');
+        const url = encodeURIComponent(shareUrl);
+        window.open(`https://wa.me/?text=${url}`, '_blank');
         setIsOpen(false);
-    }, [shareMessage, shareUrl]);
+    }, [shareUrl]);
 
     // Share to Telegram - only use URL, let the preview show the content
     // Telegram auto-generates preview from Open Graph meta tags
@@ -143,11 +135,7 @@ export function ShareButton({ item, client, className = '' }: ShareButtonProps) 
     const handleShareButtonClick = useCallback(async () => {
         if (canNativeShare) {
             // On mobile, try native share first (most reliable)
-            const shareData = {
-                title: itemName,
-                text: shareMessage,
-                url: shareUrl,
-            };
+            const shareData = { url: shareUrl };
 
             try {
                 if (navigator.canShare?.(shareData)) {
@@ -163,7 +151,7 @@ export function ShareButton({ item, client, className = '' }: ShareButtonProps) 
         }
         // Open share modal as fallback or on desktop
         setIsOpen(true);
-    }, [canNativeShare, itemName, shareMessage, shareUrl]);
+    }, [canNativeShare, shareUrl]);
 
     return (
         <>
