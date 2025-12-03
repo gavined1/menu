@@ -1,4 +1,6 @@
 import '@/styles/globals.css';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Kantumruy_Pro, Plus_Jakarta_Sans } from 'next/font/google';
 import localFont from 'next/font/local';
@@ -88,7 +90,11 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
     >
       <head />
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
