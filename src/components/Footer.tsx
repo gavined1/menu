@@ -51,7 +51,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/menu/omni"
+                  href="/omni"
                   className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
                 >
                   Demo

@@ -27,7 +27,7 @@ export function ShareButton({ item, client, className = '' }: ShareButtonProps) 
     // Generate shareable URL
     const shareUrl = useMemo(() => {
         if (typeof window === 'undefined') return '';
-        return `${window.location.origin}/menu/${client.slug}?item=${item.slug}`;
+        return `${window.location.origin}/${client.slug}?item=${item.slug}`;
     }, [client.slug, item.slug]);
 
     // Copy to clipboard using multiple methods

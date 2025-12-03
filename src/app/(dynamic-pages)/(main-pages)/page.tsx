@@ -206,7 +206,7 @@ export default function LandingPage() {
               Get Started <ArrowRight className="w-4 h-4" />
             </a>
             <Link
-              href="/menu/omni"
+              href="/omni"
               className={`w-full md:w-auto px-8 py-3 text-sm font-medium rounded-full transition-all flex items-center justify-center gap-2 backdrop-blur-sm ${isDark
                 ? 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/20'
                 : 'bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200'
@@ -343,7 +343,7 @@ export default function LandingPage() {
                       }}
                     >
                       <iframe
-                        src="/menu/omni"
+                        src="/omni"
                         className="w-full h-full border-0"
                         title="Angkor Menu Demo"
                         style={{
@@ -354,7 +354,7 @@ export default function LandingPage() {
 
                     {/* Click overlay to go to demo */}
                     <Link
-                      href="/menu/omni"
+                      href="/omni"
                       className="absolute inset-0 z-10 flex items-center justify-center bg-transparent hover:bg-black/10 transition-colors group"
                     >
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white px-5 py-2.5 rounded-full shadow-xl">
