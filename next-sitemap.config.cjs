@@ -8,7 +8,16 @@ module.exports = {
     'https://angkormenu.com',
   generateRobotsTxt: true,
   generateIndexSitemap: true,
-  exclude: ['/dashboard', '/dashboard/*', '/auth/*', '/api/*'],
+  sitemapSize: 5000, // Split sitemaps into multiple files when exceeding 5000 URLs (creates index automatically)
+  exclude: [
+    '/dashboard',
+    '/dashboard/*',
+    '/auth/*',
+    '/api/*',
+    '/sign-up', // Exclude sign-up - only manual/invite-based registration allowed
+    '/forgot-password', // Exclude forgot-password - internal use only
+    '/update-password', // Exclude update-password - internal use only
+  ],
   additionalPaths: async (config) => {
     const result = [];
 
@@ -29,6 +38,13 @@ module.exports = {
       loc: '/terms',
       changefreq: 'monthly',
       priority: 0.5,
+    });
+
+    // Add login route (only public auth route)
+    result.push({
+      loc: '/login',
+      changefreq: 'monthly',
+      priority: 0.7,
     });
 
     // Add dynamic menu pages ([/slug] routes)
