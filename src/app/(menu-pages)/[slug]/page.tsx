@@ -127,9 +127,9 @@ function MenuSkeleton() {
             {/* Search & Filter Skeleton */}
             <div className="sticky top-0 z-30 bg-white p-4 border-b">
                 <div className="h-12 bg-gray-100 rounded-2xl mb-3" />
-                <div className="flex gap-2">
+                <div className="flex gap-2 overflow-x-auto">
                     {[1, 2, 3, 4, 5].map((i) => (
-                        <div key={i} className="h-8 w-20 bg-gray-100 rounded-full" />
+                        <div key={i} className="h-8 w-20 bg-gray-100 rounded-full flex-shrink-0" />
                     ))}
                 </div>
             </div>
