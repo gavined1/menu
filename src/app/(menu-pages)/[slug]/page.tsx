@@ -4,7 +4,6 @@ import { getFullMenuData } from '@/rsc-data/menu/queries';
 import { getAbsoluteImageUrl, getSiteBaseUrl } from '@/utils/og-helpers';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
 
 interface MenuPageProps {
     params: Promise<{ slug: string }>;
@@ -110,28 +109,6 @@ export async function generateMetadata({
     };
 }
 
-// Simplified skeleton for Suspense fallback (loading.tsx handles initial load)
-function MenuSkeleton() {
-    return (
-        <div className="min-h-screen bg-white">
-            <div className="h-[55vh] bg-gray-100 rounded-b-3xl" />
-            <div className="px-4 py-6">
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                    {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100">
-                            <div className="aspect-[4/3] bg-gray-100" />
-                            <div className="p-3 space-y-2">
-                                <div className="h-4 w-16 bg-gray-100 rounded" />
-                                <div className="h-3.5 w-full bg-gray-100 rounded" />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
-}
-
 async function MenuContent({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const data = await getFullMenuData(slug);
@@ -149,10 +126,6 @@ async function MenuContent({ params }: { params: Promise<{ slug: string }> }) {
 }
 
 export default function MenuPage({ params }: MenuPageProps) {
-    return (
-        <Suspense fallback={<MenuSkeleton />}>
-            <MenuContent params={params} />
-        </Suspense>
-    );
+    return <MenuContent params={params} />;
 }
 
