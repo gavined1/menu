@@ -1,8 +1,42 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { useMenuLocale } from './locale';
 import { MenuItemCard } from './MenuItemCard';
 import type { MenuCategory, MenuItemWithCategory } from './types';
+
+// Skeleton card component matching MenuItemCard layout
+function MenuItemCardSkeleton() {
+  return (
+    <div className="h-full flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
+      {/* Image Container Skeleton */}
+      <div className="relative aspect-[4/3] bg-gray-200 flex-shrink-0" />
+
+      {/* Content Area Skeleton */}
+      <div className="flex flex-col flex-1 p-3">
+        {/* Price + Badge Row Skeleton */}
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <div className="h-4 w-16 bg-gray-200 rounded" />
+          <div className="h-5 w-12 bg-gray-200 rounded" />
+        </div>
+
+        {/* Name Skeleton */}
+        <div className="space-y-1 mb-1">
+          <div className="h-3.5 w-full bg-gray-200 rounded" />
+          <div className="h-3.5 w-3/4 bg-gray-200 rounded" />
+        </div>
+
+        {/* Description Skeleton */}
+        <div className="h-2.5 w-full bg-gray-200 rounded mt-0.5" />
+
+        {/* Category Row Skeleton */}
+        <div className="flex items-center gap-1.5 mt-auto pt-1">
+          <div className="h-2.5 w-20 bg-gray-200 rounded" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface MenuGridProps {
   items: MenuItemWithCategory[];
@@ -11,6 +45,10 @@ interface MenuGridProps {
   activeCategory?: string;
   showSeeAll?: boolean;
   onItemClick: (item: MenuItemWithCategory) => void;
+  hasMoreItems?: boolean;
+  onLoadMore?: () => void;
+  totalItems?: number;
+  isLoadingMore?: boolean;
 }
 
 export function MenuGrid({
@@ -19,8 +57,37 @@ export function MenuGrid({
   categories,
   activeCategory,
   onItemClick,
+  hasMoreItems = false,
+  onLoadMore,
+  totalItems,
+  isLoadingMore = false,
 }: MenuGridProps) {
   const { t, getLocalizedText } = useMenuLocale();
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (!hasMoreItems || !onLoadMore || !loadMoreRef.current || isLoadingMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting && !isLoadingMore) {
+          onLoadMore();
+        }
+      },
+      {
+        rootMargin: '200px', // Start loading 200px before reaching the trigger
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(loadMoreRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasMoreItems, onLoadMore, isLoadingMore]);
 
   // Determine the display title
   const displayTitle = (() => {
@@ -61,21 +128,44 @@ export function MenuGrid({
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-xl font-bold text-gray-900">{displayTitle}</h2>
         <span className="text-sm text-gray-400 font-medium">
-          {items.length} {items.length === 1 ? 'item' : 'items'}
+          {totalItems ?? items.length} {(totalItems ?? items.length) === 1 ? 'item' : 'items'}
         </span>
       </div>
 
       {/* Grid - 2 columns on mobile, responsive on larger screens */}
       <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 items-stretch">
         {items.map((item, index) => (
-          <MenuItemCard 
-            key={item.id} 
-            item={item} 
+          <MenuItemCard
+            key={item.id}
+            item={item}
             onItemClick={onItemClick}
             priority={index < 4}
           />
         ))}
+
+        {/* Skeleton Loading Cards */}
+        {isLoadingMore && (
+          <>
+            {Array.from({ length: 8 }).map((_, index) => (
+              <MenuItemCardSkeleton key={`skeleton-${index}`} />
+            ))}
+          </>
+        )}
       </div>
+
+      {/* Infinite Scroll Trigger */}
+      {hasMoreItems && !isLoadingMore && (
+        <div
+          ref={loadMoreRef}
+          className="flex items-center justify-center py-4"
+        >
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-sm text-gray-400">
+              {items.length} of {totalItems ?? items.length} items
+            </p>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

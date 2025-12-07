@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useMenuLocale } from './locale';
 import type { MenuFeaturedItem } from './types';
 
@@ -16,6 +16,7 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+  const [visibleItemsCount, setVisibleItemsCount] = useState(1); // Start with 1, then load 2 more
 
   // Get localized title/subtitle for featured items
   const getLocalizedTitle = (item: MenuFeaturedItem): string => {
@@ -46,6 +47,23 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
     return item.subtitle;
   };
 
+  // Load 2 more items after initial load (1 + 2 = 3 total max)
+  useEffect(() => {
+    if (featuredItems.length <= 1) return;
+    
+    // Load 2 more items after a short delay
+    const timer = setTimeout(() => {
+      setVisibleItemsCount((prev) => Math.min(prev + 2, Math.min(3, featuredItems.length)));
+    }, 500); // 500ms delay after initial load
+
+    return () => clearTimeout(timer);
+  }, [featuredItems.length]);
+
+  // Get visible items (max 3: 1 initial + 2 more)
+  const visibleItems = useMemo(() => {
+    return featuredItems.slice(0, Math.min(visibleItemsCount, 3));
+  }, [featuredItems, visibleItemsCount]);
+
   // Use IntersectionObserver to detect which slide is visible
   useEffect(() => {
     const slides = slideRefs.current.filter(Boolean) as HTMLDivElement[];
@@ -71,7 +89,7 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
     slides.forEach((slide) => observer.observe(slide));
 
     return () => observer.disconnect();
-  }, [featuredItems.length]);
+  }, [visibleItems.length]);
 
   // Handle user interaction - stop auto-play
   useEffect(() => {
@@ -107,11 +125,11 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
 
   // Auto-play carousel
   useEffect(() => {
-    if (!isAutoPlaying || featuredItems.length <= 1) return;
+    if (!isAutoPlaying || visibleItems.length <= 1) return;
 
     autoPlayRef.current = setInterval(() => {
       setActiveIndex((prev) => {
-        const nextIndex = (prev + 1) % featuredItems.length;
+        const nextIndex = (prev + 1) % visibleItems.length;
         scrollToSlide(nextIndex);
         return nextIndex;
       });
@@ -122,7 +140,7 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
         clearInterval(autoPlayRef.current);
       }
     };
-  }, [isAutoPlaying, featuredItems.length, scrollToSlide]);
+  }, [isAutoPlaying, visibleItems.length, scrollToSlide]);
 
   const goToSlide = useCallback(
     (index: number) => {
@@ -143,7 +161,7 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
         className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide aspect-[4/3] sm:aspect-[16/9] w-full"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {featuredItems.map((item, index) => {
+        {visibleItems.map((item, index) => {
           const title = getLocalizedTitle(item);
           const subtitle = getLocalizedSubtitle(item);
 
@@ -190,9 +208,9 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
       </div>
 
       {/* Pagination Dots - Simple */}
-      {featuredItems.length > 1 && (
+      {visibleItems.length > 1 && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-          {featuredItems.map((_, index) => (
+          {visibleItems.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}

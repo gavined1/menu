@@ -57,6 +57,8 @@ function DigitalMenuContent({
   );
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
   const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false);
+  const [visibleItemsCount, setVisibleItemsCount] = useState(4); // Initial load: 4 items (2 rows on mobile)
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Deep link: Open item modal if ?item=slug is in URL
   useEffect(() => {
@@ -97,6 +99,31 @@ function DigitalMenuContent({
 
     return filtered;
   }, [items, activeCategory, searchQuery]);
+
+  // Reset visible items count when filters change
+  useEffect(() => {
+    setVisibleItemsCount(4);
+    setIsLoadingMore(false); // Reset loading state when filters change
+  }, [activeCategory, searchQuery]);
+
+  // Get visible items slice
+  const visibleItems = useMemo(() => {
+    return filteredItems.slice(0, visibleItemsCount);
+  }, [filteredItems, visibleItemsCount]);
+
+  const hasMoreItems = filteredItems.length > visibleItemsCount;
+
+  const loadMoreItems = useCallback(() => {
+    if (isLoadingMore) return; // Prevent multiple simultaneous loads
+
+    setIsLoadingMore(true);
+
+    // Small delay to show skeleton cards for smooth UX (simulates loading)
+    setTimeout(() => {
+      setVisibleItemsCount((prev) => Math.min(prev + 8, filteredItems.length));
+      setIsLoadingMore(false);
+    }, 400); // 400ms delay for smooth skeleton animation
+  }, [filteredItems.length, isLoadingMore]);
 
   const handleCategoryChange = useCallback((categorySlug: string) => {
     setActiveCategory(categorySlug);
@@ -167,12 +194,16 @@ function DigitalMenuContent({
 
         {/* Menu Grid */}
         <MenuGrid
-          items={filteredItems}
+          items={visibleItems}
           title={gridTitle}
           categories={categories}
           activeCategory={activeCategory}
           showSeeAll={false}
           onItemClick={handleItemClick}
+          hasMoreItems={hasMoreItems}
+          onLoadMore={loadMoreItems}
+          totalItems={filteredItems.length}
+          isLoadingMore={isLoadingMore}
         />
       </div>
 
