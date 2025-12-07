@@ -6,9 +6,6 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
-// Enable ISR (Incremental Static Regeneration) - revalidate every 5 minutes
-export const revalidate = 300;
-
 interface MenuPageProps {
     params: Promise<{ slug: string }>;
     searchParams: Promise<{ item?: string }>;
