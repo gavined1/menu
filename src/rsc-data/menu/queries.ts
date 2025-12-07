@@ -8,8 +8,8 @@
  */
 
 import type { Tables } from '@/lib/database.types';
-import { cacheLife, cacheTag } from 'next/cache';
 import { createPublicSupabaseClient } from '@/supabase-clients/public';
+import { cacheLife, cacheTag } from 'next/cache';
 import { cache } from 'react';
 
 // ============================================
@@ -50,9 +50,9 @@ const getPublicSupabase = () => createPublicSupabaseClient();
  * Get a client by their slug
  */
 export const getMenuClientBySlug = cache(async (slug: string) => {
-  'use cache'
-  cacheTag('menu-clients', `menu-client-${slug}`)
-  cacheLife({ expire: 60 }) // Cache for 60 seconds
+  'use cache';
+  cacheTag('menu-clients', `menu-client-${slug}`);
+  cacheLife({ expire: 300 }); // Cache for 5 minutes (menu data doesn't change often)
 
   const supabase = getPublicSupabase();
 
@@ -75,9 +75,9 @@ export const getMenuClientBySlug = cache(async (slug: string) => {
  * Get all categories for a client
  */
 export const getMenuCategories = cache(async (clientId: string) => {
-  'use cache'
-  cacheTag('menu-categories', `menu-categories-${clientId}`)
-  cacheLife({ expire: 60 }) // Cache for 60 seconds
+  'use cache';
+  cacheTag('menu-categories', `menu-categories-${clientId}`);
+  cacheLife({ expire: 300 }); // Cache for 5 minutes
 
   const supabase = getPublicSupabase();
 
@@ -97,16 +97,50 @@ export const getMenuCategories = cache(async (clientId: string) => {
 });
 
 /**
+ * Get a single menu item by slug (lightweight for metadata)
+ */
+export const getMenuItemBySlug = cache(
+  async (clientId: string, itemSlug: string) => {
+    'use cache';
+    cacheTag('menu-items', `menu-item-${clientId}-${itemSlug}`);
+    cacheLife({ expire: 300 });
+
+    const supabase = getPublicSupabase();
+
+    const { data, error } = await supabase
+      .from('menu_items')
+      .select(
+        `
+      *,
+      category:menu_categories(id, name, name_km, slug, translations)
+    `
+      )
+      .eq('client_id', clientId)
+      .eq('slug', itemSlug)
+      .eq('is_available', true)
+      .single();
+
+    if (error) {
+      console.error('Error fetching menu item:', error);
+      return null;
+    }
+
+    return data as MenuItemWithCategory | null;
+  }
+);
+
+/**
  * Get all menu items for a client
  */
 export const getMenuItems = cache(
   async (clientId: string, categorySlug?: string) => {
-    'use cache'
-    const tagKey = categorySlug && categorySlug !== 'all' 
-      ? `menu-items-${clientId}-${categorySlug}`
-      : `menu-items-${clientId}`
-    cacheTag('menu-items', tagKey)
-    cacheLife({ expire: 60 }) // Cache for 60 seconds
+    'use cache';
+    const tagKey =
+      categorySlug && categorySlug !== 'all'
+        ? `menu-items-${clientId}-${categorySlug}`
+        : `menu-items-${clientId}`;
+    cacheTag('menu-items', tagKey);
+    cacheLife({ expire: 300 }); // Cache for 5 minutes
 
     const supabase = getPublicSupabase();
 
@@ -152,9 +186,9 @@ export const getMenuItems = cache(
  * Get featured/hero items for carousel
  */
 export const getMenuFeaturedItems = cache(async (clientId: string) => {
-  'use cache'
-  cacheTag('menu-featured-items', `menu-featured-${clientId}`)
-  cacheLife({ expire: 60 }) // Cache for 60 seconds
+  'use cache';
+  cacheTag('menu-featured-items', `menu-featured-${clientId}`);
+  cacheLife({ expire: 300 }); // Cache for 5 minutes
 
   const supabase = getPublicSupabase();
 
@@ -179,9 +213,9 @@ export const getMenuFeaturedItems = cache(async (clientId: string) => {
  */
 export const getFullMenuData = cache(
   async (clientSlug: string): Promise<FullMenuData | null> => {
-    'use cache'
-    cacheTag('menu-data', `menu-data-${clientSlug}`)
-    cacheLife({ expire: 60 }) // Cache for 60 seconds
+    'use cache';
+    cacheTag('menu-data', `menu-data-${clientSlug}`);
+    cacheLife({ expire: 300 }); // Cache for 5 minutes
 
     const client = await getMenuClientBySlug(clientSlug);
 
