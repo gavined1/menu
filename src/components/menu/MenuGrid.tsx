@@ -78,7 +78,7 @@ export function MenuGrid({
       },
       {
         rootMargin: '200px', // Start loading 200px before reaching the trigger
-        threshold: 1,
+        threshold: 0.5,
       }
     );
 
