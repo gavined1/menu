@@ -11,7 +11,7 @@ export default function MenuLoading() {
             </nav>
 
             {/* Hero Skeleton - Large visual element for FCP */}
-            <div className="h-[55vh] bg-gray-200 rounded-b-3xl" />
+            <div className="bg-gray-200 rounded-b-3xl aspect-[4/3] sm:aspect-[16/9] w-full" />
 
             {/* Search & Filter Skeleton */}
             <div className="sticky top-0 z-30 bg-white p-4 border-b">
