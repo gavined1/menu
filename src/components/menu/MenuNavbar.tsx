@@ -51,6 +51,7 @@ export function MenuNavbar({ client, onInfoClick }: MenuNavbarProps) {
           e.currentTarget.blur();
           onInfoClick?.();
         }}
+        aria-label={`Open details for ${client.name}`}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all active:scale-95 bg-black/20 backdrop-blur-md hover:bg-black/30"
       >
         <span className="text-sm font-semibold text-white/95">{client.name}</span>

@@ -63,6 +63,7 @@ const englishTranslations = {
 
   // Actions
   close: 'Close',
+  clear: 'Clear',
   seeAll: 'See All',
   share: 'Share',
   shareItem: 'Share this item',
@@ -149,6 +150,7 @@ export const uiTranslations: Translations = {
 
     // Actions
     close: 'បិទ',
+    clear: 'សម្អាត',
     seeAll: 'មើលទាំងអស់',
     share: 'ចែករំលែក',
     shareItem: 'ចែករំលែកម៉ឺនុយនេះ',
