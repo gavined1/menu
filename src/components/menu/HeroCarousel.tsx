@@ -16,7 +16,9 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
-  const [visibleItemsCount, setVisibleItemsCount] = useState(1); // Start with 1, then load 2 more
+  const [showAdditionalSlides, setShowAdditionalSlides] = useState(false);
+  const idleCallbackRef = useRef<number | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Get localized title/subtitle for featured items
   const getLocalizedTitle = (item: MenuFeaturedItem): string => {
@@ -47,22 +49,42 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
     return item.subtitle;
   };
 
-  // Load 2 more items after initial load (1 + 2 = 3 total max)
-  useEffect(() => {
-    if (featuredItems.length <= 1) return;
-    
-    // Load 2 more items after a short delay
-    const timer = setTimeout(() => {
-      setVisibleItemsCount((prev) => Math.min(prev + 2, Math.min(3, featuredItems.length)));
-    }, 500); // 500ms delay after initial load
-
-    return () => clearTimeout(timer);
-  }, [featuredItems.length]);
-
-  // Get visible items (max 3: 1 initial + 2 more)
+  // Keep initial payload light: render only first slide first, then add more during idle time.
   const visibleItems = useMemo(() => {
-    return featuredItems.slice(0, Math.min(visibleItemsCount, 3));
-  }, [featuredItems, visibleItemsCount]);
+    const maxSlides = showAdditionalSlides ? 3 : 1;
+    return featuredItems.slice(0, Math.min(maxSlides, featuredItems.length));
+  }, [featuredItems, showAdditionalSlides]);
+
+  const handleFirstImageLoaded = useCallback(() => {
+    if (showAdditionalSlides || featuredItems.length <= 1) return;
+
+    if ('requestIdleCallback' in window) {
+      idleCallbackRef.current = window.requestIdleCallback(
+        () => {
+          setShowAdditionalSlides(true);
+          idleCallbackRef.current = null;
+        },
+        { timeout: 1200 }
+      );
+      return;
+    }
+
+    timeoutRef.current = globalThis.setTimeout(() => {
+      setShowAdditionalSlides(true);
+      timeoutRef.current = null;
+    }, 800);
+  }, [featuredItems.length, showAdditionalSlides]);
+
+  useEffect(() => {
+    return () => {
+      if (idleCallbackRef.current !== null && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idleCallbackRef.current);
+      }
+      if (timeoutRef.current !== null) {
+        globalThis.clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   // Use IntersectionObserver to detect which slide is visible
   useEffect(() => {
@@ -182,6 +204,8 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
                 priority={index === 0}
                 quality={85}
                 loading={index === 0 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'high' : 'auto'}
+                onLoad={index === 0 ? handleFirstImageLoaded : undefined}
               />
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
