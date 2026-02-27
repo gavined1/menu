@@ -167,7 +167,10 @@
     "overrides": {
       "@types/react": "19.1.0",
       "@types/react-dom": "19.1.2"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@parcel/watcher"
+    ]
   },
   "devDependencies": {
     "@eslint/js": "^9.39.3",
