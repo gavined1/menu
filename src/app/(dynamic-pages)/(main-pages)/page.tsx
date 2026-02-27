@@ -24,12 +24,6 @@ import Link from 'next/link';
 export default function LandingPage() {
   const { isDark, toggleTheme, isReady } = useTheme();
 
-  // Prevent flash by showing nothing until theme is loaded
-  if (!isReady) {
-    return (
-      <div className="min-h-screen bg-slate-950" />
-    );
-  }
 
   return (
     <div
@@ -146,7 +140,9 @@ export default function LandingPage() {
                 }`}
               aria-label="Toggle theme"
             >
-              {isDark ? (
+              {!isReady ? (
+                <span className="block w-4 h-4" aria-hidden="true" />
+              ) : isDark ? (
                 <Sun className="w-4 h-4" />
               ) : (
                 <Moon className="w-4 h-4" />
