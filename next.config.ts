@@ -29,9 +29,34 @@ const securityHeaders = [
   },
 ];
 
+// For the public menu embed at /omni, allow framing
+const omniCspDirectives = ["frame-ancestors *"];
+
+if (process.env.NODE_ENV === 'production') {
+  omniCspDirectives.push('upgrade-insecure-requests');
+}
+
+const omniSecurityHeaders = [
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff',
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=()',
+  },
+  {
+    key: 'Content-Security-Policy',
+    value: omniCspDirectives.join('; '),
+  },
+];
+
 const config: NextConfig = {
   cacheComponents: true,
-  allowedDevOrigins: ['192.168.8.113'],
   images: {
     remotePatterns: [
       {
@@ -61,6 +86,10 @@ const config: NextConfig = {
   },
   async headers() {
     return [
+      {
+        source: '/omni',
+        headers: omniSecurityHeaders,
+      },
       {
         source: '/:path*',
         headers: securityHeaders,

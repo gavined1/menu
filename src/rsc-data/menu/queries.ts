@@ -8,6 +8,8 @@
  */
 
 import type { Tables } from '@/lib/database.types';
+import { createSupabaseClient } from '@/supabase-clients/server';
+import { getCachedLoggedInUserId } from '@/rsc-data/supabase';
 import { createPublicSupabaseClient } from '@/supabase-clients/public';
 import { cacheLife, cacheTag } from 'next/cache';
 import { cache } from 'react';
@@ -20,6 +22,7 @@ export type MenuClient = Tables<'menu_clients'>;
 export type MenuCategory = Tables<'menu_categories'>;
 export type MenuItem = Tables<'menu_items'>;
 export type MenuFeaturedItem = Tables<'menu_featured_items'>;
+export type MenuClientMember = Tables<'menu_client_members'>;
 
 export interface MenuItemWithCategory extends MenuItem {
   category: Pick<
@@ -33,6 +36,12 @@ export interface FullMenuData {
   categories: MenuCategory[];
   items: MenuItemWithCategory[];
   featuredItems: MenuFeaturedItem[];
+}
+
+export type MenuClientRole = 'owner' | 'admin' | 'editor' | 'viewer';
+
+export interface MenuClientWithRole extends MenuClient {
+  member_role: MenuClientRole;
 }
 
 // ============================================
@@ -235,5 +244,35 @@ export const getFullMenuData = cache(
       items,
       featuredItems,
     };
+  }
+);
+
+/**
+ * Get all menus the logged-in user is a member of, with their role.
+ * Used by the dashboard for multi-tenant management.
+ */
+export const getUserMenuClients = cache(
+  async (): Promise<MenuClientWithRole[]> => {
+    'use cache';
+    cacheTag('user-menu-clients', 'user-menu-clients');
+    cacheLife({ expire: 60 }); // cache per user briefly
+
+    const userId = await getCachedLoggedInUserId();
+    const supabase = await createSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('menu_client_members')
+      .select('role, menu_clients (*)')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error fetching user menu clients:', error);
+      return [];
+    }
+
+    return (data ?? []).map((row: any) => ({
+      ...(row.menu_clients as MenuClient),
+      member_role: row.role as MenuClientRole,
+    }));
   }
 );
