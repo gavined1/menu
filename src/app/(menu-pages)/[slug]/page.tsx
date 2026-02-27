@@ -5,6 +5,12 @@ import { getAbsoluteImageUrl, getSiteBaseUrl } from '@/utils/og-helpers';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+// Prefer running close to Supabase region (ap-northeast-2)
+export const preferredRegion = ['icn1'];
+
+// Enable ISR for menu pages so most requests are served from cache
+export const revalidate = 300;
+
 interface MenuPageProps {
     params: Promise<{ slug: string }>;
     searchParams: Promise<{ item?: string }>;
@@ -38,7 +44,8 @@ export async function generateMetadata({
             const title = `${item.name}${price}`;
             const description = item.description || `${item.name} at ${client.name}`;
             const siteUrl = getSiteBaseUrl();
-            const ogImageUrl = getAbsoluteImageUrl(itemImage) || getAbsoluteImageUrl(client.cover_image_url);
+            const ogImageUrl =
+                getAbsoluteImageUrl(itemImage) || getAbsoluteImageUrl(client.cover_image_url);
 
             return {
                 title: `${item.name} | ${client.name}`,
@@ -51,13 +58,13 @@ export async function generateMetadata({
                     description,
                     images: ogImageUrl
                         ? [
-                            {
-                                url: ogImageUrl,
-                                width: 1200,
-                                height: 630,
-                                alt: item.name,
-                            },
-                        ]
+                              {
+                                  url: ogImageUrl,
+                                  width: 1200,
+                                  height: 630,
+                                  alt: item.name,
+                              },
+                          ]
                         : [],
                 },
                 twitter: {
@@ -77,33 +84,30 @@ export async function generateMetadata({
     return {
         title: `${client.name} - Digital Menu`,
         description:
-            client.description ||
-            `View the digital menu for ${client.name}`,
+            client.description || `View the digital menu for ${client.name}`,
         openGraph: {
             type: 'website',
             url: `${siteUrl}/${slug}`,
             siteName: client.name,
             title: `${client.name} - Digital Menu`,
             description:
-                client.description ||
-                `View the digital menu for ${client.name}`,
+                client.description || `View the digital menu for ${client.name}`,
             images: ogImageUrl
                 ? [
-                    {
-                        url: ogImageUrl,
-                        width: 1200,
-                        height: 630,
-                        alt: `${client.name} - Digital Menu`,
-                    },
-                ]
+                      {
+                          url: ogImageUrl,
+                          width: 1200,
+                          height: 630,
+                          alt: `${client.name} - Digital Menu`,
+                      },
+                  ]
                 : [],
         },
         twitter: {
             card: 'summary_large_image',
             title: `${client.name} - Digital Menu`,
             description:
-                client.description ||
-                `View the digital menu for ${client.name}`,
+                client.description || `View the digital menu for ${client.name}`,
             images: ogImageUrl ? [ogImageUrl] : [],
         },
     };

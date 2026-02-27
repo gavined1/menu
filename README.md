@@ -1,5 +1,7 @@
 # Angkor Menu
 
+Next.js 16+, Supabase, Tailwind CSS 4 and TypeScript. 🚀 Next.js 🔥 Supabase 💻 TypeScript 💚 ESLint 🎨 Prettier 🐶 Husky 🧹 Lint-Staged 🧪 Jest 🧪 Testing Library 🕹️ Playwright ✍️ Commitizen 💬 Commitlint 💻 VSCode 🌪️ Vercel 🎨 PostCSS 🍃 Tailwind CSS ⚛️ React Query
+
 ![Angkor Menu - Digital Catalogs for Any Business](https://angkormenu.com/images/banner.png)
 
 Angkor Menu is a modern digital menu and catalog platform built with Next.js 16 and Supabase. Create beautiful, mobile-first digital menus for restaurants, retail stores, transportation services, and any business that needs a digital catalog.
