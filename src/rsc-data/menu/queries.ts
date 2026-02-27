@@ -250,29 +250,27 @@ export const getFullMenuData = cache(
 /**
  * Get all menus the logged-in user is a member of, with their role.
  * Used by the dashboard for multi-tenant management.
+ *
+ * NOTE: This function is intentionally NOT wrapped in React.cache because it
+ * depends on dynamic cookies() via createSupabaseClient, which is not allowed
+ * inside a cache scope with Next.js Cache Components.
  */
-export const getUserMenuClients = cache(
-  async (): Promise<MenuClientWithRole[]> => {
-    'use cache';
-    cacheTag('user-menu-clients', 'user-menu-clients');
-    cacheLife({ expire: 60 }); // cache per user briefly
+export const getUserMenuClients = async (): Promise<MenuClientWithRole[]> => {
+  const userId = await getCachedLoggedInUserId();
+  const supabase = await createSupabaseClient();
 
-    const userId = await getCachedLoggedInUserId();
-    const supabase = await createSupabaseClient();
+  const { data, error } = await supabase
+    .from('menu_client_members')
+    .select('role, menu_clients (*)')
+    .eq('user_id', userId);
 
-    const { data, error } = await supabase
-      .from('menu_client_members')
-      .select('role, menu_clients (*)')
-      .eq('user_id', userId);
-
-    if (error) {
-      console.error('Error fetching user menu clients:', error);
-      return [];
-    }
-
-    return (data ?? []).map((row: any) => ({
-      ...(row.menu_clients as MenuClient),
-      member_role: row.role as MenuClientRole,
-    }));
+  if (error) {
+    console.error('Error fetching user menu clients:', error);
+    return [];
   }
-);
+
+  return (data ?? []).map((row: any) => ({
+    ...(row.menu_clients as MenuClient),
+    member_role: row.role as MenuClientRole,
+  }));
+};
