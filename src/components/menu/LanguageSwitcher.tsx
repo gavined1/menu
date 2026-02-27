@@ -16,6 +16,7 @@ export function LanguageSwitcher() {
     const { locale, currency, setLocale, setCurrency, t } = useMenuLocale();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const menuId = 'menu-locale-settings';
 
     // Close menu when clicking outside
     useEffect(() => {
@@ -24,8 +25,20 @@ export function LanguageSwitcher() {
                 setIsOpen(false);
             }
         }
+
+        function handleEscape(event: KeyboardEvent) {
+            if (event.key === 'Escape') {
+                setIsOpen(false);
+            }
+        }
+
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleEscape);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleEscape);
+        };
     }, []);
 
     return (
@@ -34,6 +47,9 @@ export function LanguageSwitcher() {
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-black/20 backdrop-blur-md hover:bg-black/30 transition-all text-xs"
                 aria-label="Language and currency settings"
+                aria-haspopup="menu"
+                aria-expanded={isOpen}
+                aria-controls={menuId}
             >
                 <Globe className="w-3.5 h-3.5 text-white/90" />
                 <span className="text-white/90 font-medium">
@@ -42,7 +58,12 @@ export function LanguageSwitcher() {
             </button>
 
             {isOpen && (
-                <div className="absolute left-0 mt-2 w-44 sm:w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div
+                    id={menuId}
+                    role="menu"
+                    aria-label="Language and currency settings"
+                    className="absolute left-0 mt-2 w-44 sm:w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                >
                     {/* Language Section */}
                     <div className="p-1.5 border-b border-gray-100">
                         <p className="px-2.5 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
@@ -62,6 +83,8 @@ export function LanguageSwitcher() {
                                             ? 'bg-gray-100 text-gray-900'
                                             : 'text-gray-600 hover:bg-gray-50'
                                     }`}
+                                    role="menuitemradio"
+                                    aria-checked={locale === localeCode}
                                 >
                                     <span className="flex items-center gap-2">
                                         <span className="text-base">{config.flag}</span>
@@ -94,6 +117,8 @@ export function LanguageSwitcher() {
                                             ? 'bg-gray-100 text-gray-900'
                                             : 'text-gray-600 hover:bg-gray-50'
                                     }`}
+                                    role="menuitemradio"
+                                    aria-checked={currency === currencyCode}
                                 >
                                     <span className="flex items-center gap-2">
                                         <span className="w-5 text-center font-mono">{config.symbol}</span>

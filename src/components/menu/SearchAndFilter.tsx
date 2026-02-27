@@ -26,6 +26,8 @@ export function SearchAndFilter({
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const categoryRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  const searchInputId = 'menu-search-input';
+  const categoriesLabelId = 'menu-categories-label';
 
   // Handle sticky state
   useEffect(() => {
@@ -136,17 +138,20 @@ export function SearchAndFilter({
               >
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 z-10" />
                 <input
+                  id={searchInputId}
                   ref={inputRef}
                   type="text"
                   value={searchQuery}
                   onChange={handleSearchChange}
                   className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-full text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300/50 focus:border-gray-300 transition-all"
                   placeholder={t('searchPlaceholder')}
+                  aria-label={t('searchPlaceholder')}
                   tabIndex={isSearchExpanded ? 0 : -1}
                 />
                 <button
                   onClick={searchQuery ? clearSearch : closeSearch}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-all z-10"
+                  aria-label={searchQuery ? t('clear') : t('close')}
                   tabIndex={isSearchExpanded ? 0 : -1}
                 >
                   <X className="w-4 h-4" />
@@ -164,14 +169,21 @@ export function SearchAndFilter({
                 onClick={handleSearchIconClick}
                 className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 transition-all duration-200 active:scale-95"
                 aria-label={t('searchPlaceholder')}
+                aria-expanded={isSearchExpanded}
+                aria-controls={searchInputId}
                 tabIndex={isSearchExpanded ? -1 : 0}
               >
                 <Search className="w-4 h-4" />
               </button>
 
               {/* Category Pills */}
+              <span id={categoriesLabelId} className="sr-only">
+                {t('categories')}
+              </span>
               <div
                 className="flex gap-2 flex-1 overflow-x-auto"
+                role="tablist"
+                aria-labelledby={categoriesLabelId}
                 style={{
                   scrollbarWidth: 'none',
                   msOverflowStyle: 'none',
@@ -189,6 +201,8 @@ export function SearchAndFilter({
                       }}
                       onClick={() => onCategoryChange(category.slug)}
                       tabIndex={isSearchExpanded ? -1 : 0}
+                      role="tab"
+                      aria-selected={isActive}
                       className={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ${isActive
                         ? 'bg-gray-900 text-white'
                         : 'bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900 border border-gray-200'
