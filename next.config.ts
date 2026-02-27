@@ -1,5 +1,11 @@
 import { NextConfig } from 'next';
 
+const cspDirectives = ["frame-ancestors 'none'"];
+
+if (process.env.NODE_ENV === 'production') {
+  cspDirectives.push('upgrade-insecure-requests');
+}
+
 const securityHeaders = [
   {
     key: 'X-Content-Type-Options',
@@ -19,7 +25,7 @@ const securityHeaders = [
   },
   {
     key: 'Content-Security-Policy',
-    value: "frame-ancestors 'none'; upgrade-insecure-requests",
+    value: cspDirectives.join('; '),
   },
 ];
 
