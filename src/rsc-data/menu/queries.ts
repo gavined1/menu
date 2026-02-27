@@ -58,31 +58,7 @@ export const getMenuClientBySlug = cache(async (slug: string) => {
 
   const { data, error } = await supabase
     .from('menu_clients')
-    .select(
-      `
-      id,
-      name,
-      slug,
-      description,
-      logo_url,
-      cover_image_url,
-      primary_color,
-      accent_color,
-      is_active,
-      settings,
-      currency,
-      currency_symbol,
-      default_locale,
-      supported_locales,
-      supported_currencies,
-      exchange_rate,
-      phone,
-      email,
-      address,
-      city,
-      social_links
-    `
-    )
+    .select('*')
     .eq('slug', slug)
     .eq('is_active', true)
     .single();
@@ -107,21 +83,7 @@ export const getMenuCategories = cache(async (clientId: string) => {
 
   const { data, error } = await supabase
     .from('menu_categories')
-    .select(
-      `
-      id,
-      client_id,
-      name,
-      name_km,
-      slug,
-      description,
-      description_km,
-      image_url,
-      sort_order,
-      is_active,
-      translations
-    `
-    )
+    .select('*')
     .eq('client_id', clientId)
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
@@ -232,22 +194,7 @@ export const getMenuFeaturedItems = cache(async (clientId: string) => {
 
   const { data, error } = await supabase
     .from('menu_featured_items')
-    .select(
-      `
-      id,
-      client_id,
-      item_id,
-      title,
-      title_km,
-      subtitle,
-      subtitle_km,
-      badge_text,
-      image_url,
-      sort_order,
-      is_active,
-      translations
-    `
-    )
+    .select('*')
     .eq('client_id', clientId)
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
