@@ -39,14 +39,11 @@ export async function GET(request: Request) {
 
   revalidatePath('/', 'layout');
 
-  let redirectTo = new URL('/dashboard', requestUrl.origin);
-
-  if (next) {
-    // decode next param
-    const decodedNext = decodeURIComponent(next);
-    // validate next param
-    redirectTo = new URL(decodedNext, requestUrl.origin);
-  }
+  const safeNextPath =
+    next && next.startsWith('/') && !next.startsWith('//')
+      ? next
+      : '/dashboard';
+  const redirectTo = new URL(safeNextPath, requestUrl.origin);
 
   return NextResponse.redirect(redirectTo);
 }
