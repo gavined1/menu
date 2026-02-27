@@ -1,6 +1,3 @@
-'use client';
-
-import { useTheme } from '@/stores/theme-store';
 import {
   ArrowRight,
   Bus,
@@ -8,28 +5,19 @@ import {
   Hotel,
   Image as ImageIcon,
   Languages,
-  Moon,
   ScanLine,
   Search,
   Share2,
   ShieldCheck,
   ShoppingBag,
   Smartphone,
-  Sun,
   Utensils,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export default function LandingPage() {
-  const { isDark, toggleTheme, isReady } = useTheme();
-
-  // Prevent flash by showing nothing until theme is loaded
-  if (!isReady) {
-    return (
-      <div className="min-h-screen bg-slate-950" />
-    );
-  }
+  const isDark = true;
 
   return (
     <div
@@ -138,20 +126,12 @@ export default function LandingPage() {
             >
               Log in
             </Link>
-            <button
-              onClick={toggleTheme}
-              className={`p-2.5 rounded-full transition-all ${isDark
-                ? 'bg-white/10 hover:bg-white/20 text-white'
-                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                }`}
-              aria-label="Toggle theme"
+            <div
+              className="p-2.5 rounded-full bg-white/10 text-white"
+              aria-hidden="true"
             >
-              {isDark ? (
-                <Sun className="w-4 h-4" />
-              ) : (
-                <Moon className="w-4 h-4" />
-              )}
-            </button>
+              <span className="block w-4 h-4" />
+            </div>
           </div>
         </div>
       </nav>
