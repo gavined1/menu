@@ -8,9 +8,6 @@ import { notFound } from 'next/navigation';
 // Prefer running close to Supabase region (ap-northeast-2)
 export const preferredRegion = ['icn1'];
 
-// Enable ISR for menu pages so most requests are served from cache
-export const revalidate = 300;
-
 interface MenuPageProps {
     params: Promise<{ slug: string }>;
     searchParams: Promise<{ item?: string }>;
