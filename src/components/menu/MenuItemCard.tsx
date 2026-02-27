@@ -84,17 +84,17 @@ export function MenuItemCard({ item, onItemClick, priority = false }: MenuItemCa
   const categoryName = item.category ? getLocalizedText(item.category) : null;
 
   return (
-    <div
+    <button
+      type="button"
       onClick={() => {
-        // Blur any focused element to prevent aria-hidden conflict when modal opens
         if (document.activeElement instanceof HTMLElement) {
           document.activeElement.blur();
         }
         onItemClick(item);
       }}
-      className="group h-full flex flex-col bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-gray-200/50 active:scale-[0.98] border border-gray-100"
+      aria-label={`${itemName}, ${formatPrice(item.price)}`}
+      className="group h-full w-full flex flex-col bg-white rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-gray-200/50 active:scale-[0.98] border border-gray-100 text-left"
     >
-      {/* Image Container */}
       <div className="relative aspect-[4/3] bg-gray-100 flex-shrink-0 overflow-hidden">
         {item.image_url ? (
           <Image
@@ -114,9 +114,7 @@ export function MenuItemCard({ item, onItemClick, priority = false }: MenuItemCa
         )}
       </div>
 
-      {/* Content Area */}
       <div className="flex flex-col flex-1 p-3">
-        {/* Price + Badge Row */}
         <div className="flex items-center justify-between gap-2 mb-1">
           <span className="text-sm font-bold text-gray-900">
             {formatPrice(item.price)}
@@ -133,25 +131,22 @@ export function MenuItemCard({ item, onItemClick, priority = false }: MenuItemCa
           )}
         </div>
 
-        {/* Name */}
         <h3 className="font-medium text-gray-900 text-[13px] leading-tight line-clamp-2 min-h-[2rem]">
           {itemName}
         </h3>
 
-        {/* Description */}
-        <p className="text-[11px] text-gray-400 line-clamp-1 mt-0.5">
+        <p className="text-[11px] text-gray-600 line-clamp-1 mt-0.5">
           {itemDescription || '\u00A0'}
         </p>
 
-        {/* Category Row */}
         <div className="flex items-center gap-1.5 mt-auto pt-1 overflow-hidden">
           {categoryName && (
-            <span className="text-[10px] text-gray-400 truncate min-w-0">
+            <span className="text-[10px] text-gray-600 truncate min-w-0">
               • {categoryName}
             </span>
           )}
         </div>
       </div>
-    </div>
+    </button>
   );
 }

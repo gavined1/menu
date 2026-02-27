@@ -16,6 +16,7 @@ export function LanguageSwitcher() {
     const { locale, currency, setLocale, setCurrency, t } = useMenuLocale();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const menuId = "language-currency-menu";
 
     // Close menu when clicking outside
     useEffect(() => {
@@ -31,9 +32,13 @@ export function LanguageSwitcher() {
     return (
         <div className="relative" ref={menuRef}>
             <button
+                type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-black/20 backdrop-blur-md hover:bg-black/30 transition-all text-xs"
                 aria-label="Language and currency settings"
+                aria-haspopup="menu"
+                aria-expanded={isOpen}
+                aria-controls={menuId}
             >
                 <Globe className="w-3.5 h-3.5 text-white/90" />
                 <span className="text-white/90 font-medium">
@@ -42,7 +47,7 @@ export function LanguageSwitcher() {
             </button>
 
             {isOpen && (
-                <div className="absolute left-0 mt-2 w-44 sm:w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div id={menuId} role="menu" className="absolute left-0 mt-2 w-44 sm:w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                     {/* Language Section */}
                     <div className="p-1.5 border-b border-gray-100">
                         <p className="px-2.5 py-1 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
@@ -52,6 +57,9 @@ export function LanguageSwitcher() {
                             const config = locales[localeCode as SupportedLocale];
                             return (
                                 <button
+                                    type="button"
+                                    role="menuitemradio"
+                                    aria-checked={locale === localeCode}
                                     key={localeCode}
                                     onClick={() => {
                                         setLocale(localeCode as SupportedLocale);
@@ -84,6 +92,9 @@ export function LanguageSwitcher() {
                             const config = currencies[currencyCode as SupportedCurrency];
                             return (
                                 <button
+                                    type="button"
+                                    role="menuitemradio"
+                                    aria-checked={currency === currencyCode}
                                     key={currencyCode}
                                     onClick={() => {
                                         setCurrency(currencyCode as SupportedCurrency);

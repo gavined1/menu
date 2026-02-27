@@ -134,10 +134,14 @@ export function SearchAndFilter({
                 className={`relative w-full max-w-md transition-all duration-300 ease-out ${isSearchExpanded ? 'scale-100' : 'scale-95'
                   }`}
               >
+                <label htmlFor="menu-search" className="sr-only">
+                  {t('searchPlaceholder')}
+                </label>
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 z-10" />
                 <input
+                  id="menu-search"
                   ref={inputRef}
-                  type="text"
+                  type="search"
                   value={searchQuery}
                   onChange={handleSearchChange}
                   className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-full text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300/50 focus:border-gray-300 transition-all"
@@ -145,8 +149,10 @@ export function SearchAndFilter({
                   tabIndex={isSearchExpanded ? 0 : -1}
                 />
                 <button
+                  type="button"
                   onClick={searchQuery ? clearSearch : closeSearch}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-all z-10"
+                  aria-label={t('close')}
                   tabIndex={isSearchExpanded ? 0 : -1}
                 >
                   <X className="w-4 h-4" />
@@ -161,6 +167,7 @@ export function SearchAndFilter({
             >
               {/* Search Icon Button */}
               <button
+                type="button"
                 onClick={handleSearchIconClick}
                 className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 transition-all duration-200 active:scale-95"
                 aria-label={t('searchPlaceholder')}
@@ -183,6 +190,7 @@ export function SearchAndFilter({
                   const isActive = activeCategory === category.slug;
                   return (
                     <button
+                      type="button"
                       key={category.id}
                       ref={(el) => {
                         if (el) categoryRefs.current.set(category.slug, el);
