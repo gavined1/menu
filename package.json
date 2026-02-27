@@ -150,6 +150,20 @@
     "node": ">=24.0.0",
     "pnpm": ">=9.0.0"
   },
+  "browserslist": {
+    "production": [
+      "chrome >= 111",
+      "edge >= 111",
+      "firefox >= 128",
+      "safari >= 16.4",
+      "ios_saf >= 16.4"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "pnpm": {
     "overrides": {
       "@types/react": "19.1.0",
