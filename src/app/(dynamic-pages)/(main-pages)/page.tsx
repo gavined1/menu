@@ -64,7 +64,7 @@ const cardStaggerContainer = {
   hidden: {},
 };
 const cardItemVariant = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 5 },
   visible: {
     opacity: 1,
     y: 0,
@@ -77,9 +77,9 @@ const phoneEntrance = {
   hidden: {
     opacity: 0,
     y: 120,
-    rotateX: 28,
+    rotateX: 60,
     scale: 0.92,
-    transformOrigin: 'center bottom',
+    transformOrigin: 'right bottom',
   },
   visible: {
     opacity: 1,
