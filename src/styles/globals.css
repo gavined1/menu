@@ -264,12 +264,9 @@
   }
 }
 
-/* Menu fonts */
+/* Khmer font only - used site-wide */
+.font-khmer,
 .font-menu {
-  font-family: var(--font-english), 'Plus Jakarta Sans', system-ui, sans-serif;
-}
-
-.font-khmer {
   font-family: var(--font-khmer), 'Kantumruy Pro', sans-serif;
 }
 

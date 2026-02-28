@@ -177,7 +177,7 @@ function DigitalMenuContent({
   return (
     <>
       {/* Main Content */}
-      <div className={`min-h-screen bg-white ${locale === 'km' ? 'font-khmer' : 'font-menu'}`}>
+      <div className="min-h-screen bg-white font-khmer">
         {/* Fixed Navbar */}
         <MenuNavbar client={client} onInfoClick={handleOpenInfoDrawer} />
 
@@ -208,7 +208,7 @@ function DigitalMenuContent({
       </div>
 
       {/* Modals/Drawers - Outside main content to avoid aria-hidden conflicts */}
-      <div className={locale === 'km' ? 'font-khmer' : 'font-menu'}>
+      <div className="font-khmer">
         <ItemDetailModal
           item={selectedItem}
           client={client}
