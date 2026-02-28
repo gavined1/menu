@@ -1,170 +1,239 @@
--- Seed data for private_items table
--- This creates sample data for testing purposes
--- Insert test private_items with hardcoded UUIDs simulating different users
-INSERT INTO public.private_items (id, name, description, created_at)
-VALUES (
+-- Seed data from current database snapshot
+-- Run after migrations. Order: menu_clients → menu_categories → menu_items → menu_featured_items → menu_client_members
+-- Note: menu_clients.owner_id and menu_client_members reference auth.users; ensure that user exists or set owner_id to NULL for a portable seed.
+
+-- ============================================
+-- menu_clients
+-- ============================================
+INSERT INTO public.menu_clients (
+  id, name, slug, description, logo_url, cover_image_url,
+  primary_color, accent_color, is_active, settings,
+  phone, email, address, city, opening_hours, social_links,
+  default_locale, currency, exchange_rate, owner_id
+) VALUES (
+  'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+  'OMNI Restaurant',
+  'omni',
+  'Modern dining experience with curated seasonal dishes',
+  'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop',
+  '#000000',
+  '#ffffff',
+  true,
+  '{}',
+  '+1 (555) 123-4567',
+  'hello@omnirestaurant.com',
+  '123 Culinary Avenue, Suite 100',
+  'San Francisco, CA',
+  '{"friday":"11:00 AM - 11:00 PM","monday":"11:00 AM - 10:00 PM","sunday":"10:00 AM - 9:00 PM","tuesday":"11:00 AM - 10:00 PM","saturday":"10:00 AM - 11:00 PM","thursday":"11:00 AM - 11:00 PM","wednesday":"11:00 AM - 10:00 PM"}'::jsonb,
+  '{"facebook":"https://facebook.com/omnirestaurant","instagram":"https://instagram.com/omnirestaurant"}'::jsonb,
+  'en',
+  'USD',
+  4000,
+  '944cd4ef-032c-4dc8-83e7-e4249db41356'
+)
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  slug = EXCLUDED.slug,
+  description = EXCLUDED.description,
+  logo_url = EXCLUDED.logo_url,
+  cover_image_url = EXCLUDED.cover_image_url,
+  primary_color = EXCLUDED.primary_color,
+  accent_color = EXCLUDED.accent_color,
+  is_active = EXCLUDED.is_active,
+  settings = EXCLUDED.settings,
+  phone = EXCLUDED.phone,
+  email = EXCLUDED.email,
+  address = EXCLUDED.address,
+  city = EXCLUDED.city,
+  opening_hours = EXCLUDED.opening_hours,
+  social_links = EXCLUDED.social_links,
+  default_locale = EXCLUDED.default_locale,
+  currency = EXCLUDED.currency,
+  exchange_rate = EXCLUDED.exchange_rate,
+  owner_id = EXCLUDED.owner_id,
+  updated_at = now();
+
+-- ============================================
+-- menu_categories
+-- ============================================
+INSERT INTO public.menu_categories (id, client_id, name, slug, sort_order, is_active, name_km, description_km)
+VALUES
+  ('b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'All', 'all', 0, true, NULL, NULL),
+  ('b2eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Salads', 'salads', 1, true, NULL, NULL),
+  ('b3eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Burgers', 'burgers', 2, true, NULL, NULL),
+  ('b4eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Bowls', 'bowls', 3, true, NULL, NULL),
+  ('b5eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Dessert', 'dessert', 4, true, NULL, NULL),
+  ('b6eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Drinks', 'drinks', 5, true, NULL, NULL)
+ON CONFLICT (id) DO UPDATE SET
+  client_id = EXCLUDED.client_id,
+  name = EXCLUDED.name,
+  slug = EXCLUDED.slug,
+  sort_order = EXCLUDED.sort_order,
+  is_active = EXCLUDED.is_active,
+  updated_at = now();
+
+-- ============================================
+-- menu_items
+-- ============================================
+INSERT INTO public.menu_items (
+  id, client_id, category_id, name, slug, description, price, image_url, badges,
+  is_featured, is_available, sort_order, metadata, name_km, description_km, images
+) VALUES
+  (
+    'c3568a4c-3fe8-4eda-9d15-22b225fac3de',
     'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-    'Project Alpha',
-    'A comprehensive project management tool for agile teams',
-    NOW() - INTERVAL '5 days'
+    'b4eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    'Spicy Vodka Rigatoni',
+    'spicy-vodka-rigatoni',
+    'Calabrian chili, parmesan, fresh basil.',
+    16.50,
+    'https://images.unsplash.com/photo-1563379926898-05f4575a45d8',
+    ARRAY['spicy']::public.menu_item_badge_type[],
+    false, true, 0, '{}', NULL, NULL,
+    ARRAY['https://images.unsplash.com/photo-1563379926898-05f4575a45d8?q=80&w=500&auto=format&fit=crop']
   ),
   (
-    'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22',
-    'Marketing Campaign Q4',
-    'Strategic marketing initiatives for the fourth quarter',
-    NOW() - INTERVAL '3 days'
+    '7fdff760-252e-4b88-88aa-cf499eb6e8b5',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    'b3eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    'Classic Wagyu Burger',
+    'classic-wagyu-burger',
+    'Aged cheddar, caramelized onions, brioche.',
+    18.50,
+    'https://images.unsplash.com/photo-1568901346375-23c9450c58cd',
+    ARRAY['best_seller']::public.menu_item_badge_type[],
+    true, true, 0, '{}', NULL, NULL,
+    ARRAY['https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800', 'https://images.unsplash.com/photo-1550317138-10000687a72b?w=800', 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800']
   ),
   (
-    'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a33',
-    'Product Launch Checklist',
-    'Complete checklist for new product launch procedures',
-    NOW() - INTERVAL '1 day'
+    '1aee32cc-b6c7-4186-8fc7-69a4bdae6be3',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    'b4eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    'Green Goddess Bowl',
+    'green-goddess-bowl',
+    'Kale, edamame, cucumber, green tahini.',
+    14.00,
+    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd',
+    ARRAY['vegan']::public.menu_item_badge_type[],
+    false, true, 0, '{}', NULL, NULL,
+    ARRAY['https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=500&auto=format&fit=crop']
   ),
   (
-    'd3eebc99-9c0b-4ef8-bb6d-6bb9bd380a44',
-    'Team Building Activities',
-    'Collection of team building exercises and activities',
-    NOW() - INTERVAL '7 days'
+    '77b202e9-470b-4abf-b7b1-1792e9406b28',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    NULL,
+    'Filet Mignon',
+    'filet-mignon',
+    'Garlic butter, rosemary potatoes.',
+    32.00,
+    'https://images.unsplash.com/photo-1600891964092-4316c288032e',
+    ARRAY[]::public.menu_item_badge_type[],
+    false, true, 0, '{}', NULL, NULL,
+    ARRAY['https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=500&auto=format&fit=crop']
   ),
   (
-    'e4eebc99-9c0b-4ef8-bb6d-6bb9bd380a55',
-    'Technical Documentation',
-    'Comprehensive technical documentation for the platform',
-    NOW()
+    '799b8d2f-58aa-4cd9-a73e-2518a8c9f13c',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    'b6eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    'Iced Matcha Latte',
+    'iced-matcha-latte',
+    'Ceremonial grade matcha, oat milk.',
+    6.50,
+    'https://images.unsplash.com/photo-1551024709-8f23befc6f87',
+    ARRAY[]::public.menu_item_badge_type[],
+    false, true, 0, '{}', NULL, NULL,
+    ARRAY['https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=500&auto=format&fit=crop']
+  ),
+  (
+    '815db343-2304-48d5-8e39-0a3c5ffe89c4',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    'b5eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    'Berry Cheesecake',
+    'berry-cheesecake',
+    'Seasonal berries, graham crust.',
+    9.00,
+    'https://images.unsplash.com/photo-1565958011703-44f9829ba187',
+    ARRAY[]::public.menu_item_badge_type[],
+    false, true, 0, '{}', NULL, NULL,
+    ARRAY['https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=800', 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=800']
   )
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  client_id = EXCLUDED.client_id,
+  category_id = EXCLUDED.category_id,
+  name = EXCLUDED.name,
+  slug = EXCLUDED.slug,
+  description = EXCLUDED.description,
+  price = EXCLUDED.price,
+  image_url = EXCLUDED.image_url,
+  badges = EXCLUDED.badges,
+  is_featured = EXCLUDED.is_featured,
+  is_available = EXCLUDED.is_available,
+  sort_order = EXCLUDED.sort_order,
+  metadata = EXCLUDED.metadata,
+  name_km = EXCLUDED.name_km,
+  description_km = EXCLUDED.description_km,
+  images = EXCLUDED.images,
+  updated_at = now();
 
--- Seed demo authors in auth.users
-INSERT INTO auth.users (id, email, raw_app_meta_data, raw_user_meta_data, encrypted_password, email_confirmed_at, created_at, updated_at)
+-- ============================================
+-- menu_featured_items
+-- ============================================
+INSERT INTO public.menu_featured_items (id, client_id, item_id, title, subtitle, badge_text, image_url, sort_order, is_active, title_km, subtitle_km)
 VALUES
   (
-    '11111111-1111-4111-8111-111111111111',
-    'olivia@example.com',
-    '{"provider":"email","providers":["email"]}',
-    '{"full_name":"Olivia Martin"}',
-    crypt('Password123!', gen_salt('bf')),
-    NOW(),
-    NOW(),
-    NOW()
+    'b0de2bf0-8a89-46c6-b5eb-5f66c902472b',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    NULL,
+    'Fresh Harvest Super Bowl',
+    'Quinoa, avocado, roasted sweet potato, and tahini dressing.',
+    'New Arrival',
+    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1000&auto=format&fit=crop',
+    0, true, NULL, NULL
   ),
   (
-    '22222222-2222-4222-8222-222222222222',
-    'liam@example.com',
-    '{"provider":"email","providers":["email"]}',
-    '{"full_name":"Liam Patel"}',
-    crypt('Password123!', gen_salt('bf')),
-    NOW(),
-    NOW(),
-    NOW()
+    'b55b505a-0b0c-45e6-8d25-0adcaf80d5e7',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    NULL,
+    'Artisan Truffle Flatbread',
+    'Wild mushrooms, truffle oil, mozzarella, and thyme.',
+    'Best Seller',
+    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop',
+    1, true, NULL, NULL
   ),
   (
-    '33333333-3333-4333-8333-333333333333',
-    'amelia@example.com',
-    '{"provider":"email","providers":["email"]}',
-    '{"full_name":"Amelia Chen"}',
-    crypt('Password123!', gen_salt('bf')),
-    NOW(),
-    NOW(),
-    NOW()
+    'e4adcd26-5754-408c-92b2-10da7c7706ac',
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    NULL,
+    'Avocado & Poached Egg Toast',
+    'Sourdough, chili flakes, microgreens, and olive oil.',
+    'Breakfast',
+    'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=1000&auto=format&fit=crop',
+    2, true, NULL, NULL
   )
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  client_id = EXCLUDED.client_id,
+  item_id = EXCLUDED.item_id,
+  title = EXCLUDED.title,
+  subtitle = EXCLUDED.subtitle,
+  badge_text = EXCLUDED.badge_text,
+  image_url = EXCLUDED.image_url,
+  sort_order = EXCLUDED.sort_order,
+  is_active = EXCLUDED.is_active,
+  updated_at = now();
 
--- Seed blog posts
-INSERT INTO public.content_blog_posts (id, slug, title, excerpt, body, author_id, is_published, published_at, created_at)
-VALUES
-  (
-    '44444444-4444-4444-9444-444444444444',
-    'supabase-workflows-at-scale',
-    'Supabase Workflows at Scale',
-    'How we orchestrate Supabase workflows for multi-tenant platforms.',
-    'Supabase workflows require robust patterns for scaling teams and data-heavy workloads. In this post we walk through connection pooling, background jobs, and schema design tactics that keep queries fast under load.',
-    '11111111-1111-4111-8111-111111111111',
-    true,
-    NOW() - INTERVAL '10 days',
-    NOW() - INTERVAL '12 days'
-  ),
-  (
-    '55555555-5555-4555-9555-555555555555',
-    'designing-nextjs-edge-experiences',
-    'Designing Next.js Edge Experiences',
-    'Blueprints for delivering personalized UX at the edge with Next.js 15.',
-    'Edge rendering with Next.js 15 unlocks real-time personalization. We explore caching strategies, streaming responses, and how to pair Supabase RLS with middleware to keep sessions fast and secure.',
-    '22222222-2222-4222-8222-222222222222',
-    true,
-    NOW() - INTERVAL '7 days',
-    NOW() - INTERVAL '9 days'
-  ),
-  (
-    '66666666-6666-4666-9666-666666666666',
-    'tailwind-shadcn-design-systems',
-    'Tailwind + shadcn/ui Design Systems',
-    'Practical guide for building cohesive UI systems with Tailwind and shadcn/ui.',
-    'Design systems thrive on consistency. Learn how to blend Tailwind, shadcn/ui primitives, and Radix accessibility helpers to ship interfaces that scale with your product roadmap.',
-    '33333333-3333-4333-8333-333333333333',
-    true,
-    NOW() - INTERVAL '5 days',
-    NOW() - INTERVAL '6 days'
-  ),
-  (
-    '77777777-7777-4777-9777-777777777777',
-    'caching-strategies-for-rsc',
-    'Caching Strategies for RSC',
-    'Patterns for caching React Server Component data safely.',
-    'React Server Components shift the caching story. We cover memoization utilities, revalidation, and how to avoid serving stale personalized content across tenants.',
-    '11111111-1111-4111-8111-111111111111',
-    true,
-    NOW() - INTERVAL '3 days',
-    NOW() - INTERVAL '4 days'
-  ),
-  (
-    '88888888-8888-4888-9888-888888888888',
-    'shipping-reliable-server-actions',
-    'Shipping Reliable Server Actions',
-    'Lessons learned from production hardening of Next.js server actions.',
-    'Server actions remove client round-trips but require great observability. In this walkthrough we explore logging, retries, and coupling actions with pgTap tests to catch regressions.',
-    '22222222-2222-4222-8222-222222222222',
-    true,
-    NOW() - INTERVAL '1 day',
-    NOW() - INTERVAL '2 days'
-  )
-ON CONFLICT (slug) DO NOTHING;
-
--- Seed blog post comments
-INSERT INTO public.content_blog_post_comments (id, blog_post_id, author_id, body, created_at)
-VALUES
-  (
-    '99999999-9999-4999-9999-999999999999',
-    '44444444-4444-4444-9444-444444444444',
-    '22222222-2222-4222-8222-222222222222',
-    'Loved the section on connection pooling—would enjoy a deep dive on pgBouncer with Supabase.',
-    NOW() - INTERVAL '8 days'
-  ),
-  (
-    'aaaaaaa1-aaaa-4aaa-9aaa-aaaaaaaaaaa1',
-    '55555555-5555-4555-9555-555555555555',
-    '33333333-3333-4333-8333-333333333333',
-    'This aligns perfectly with our edge A/B testing strategy. Appreciate the checklist at the end.',
-    NOW() - INTERVAL '6 days'
-  ),
-  (
-    'aaaaaaa2-aaaa-4aaa-9aaa-aaaaaaaaaaa2',
-    '66666666-6666-4666-9666-666666666666',
-    '11111111-1111-4111-8111-111111111111',
-    'Great reminder to document tokens for each primitive. The color recipes example is gold.',
-    NOW() - INTERVAL '4 days'
-  ),
-  (
-    'aaaaaaa3-aaaa-4aaa-9aaa-aaaaaaaaaaa3',
-    '77777777-7777-4777-9777-777777777777',
-    '22222222-2222-4222-8222-222222222222',
-    'Could you expand on revalidation timing for incremental static regeneration?',
-    NOW() - INTERVAL '2 days'
-  ),
-  (
-    'aaaaaaa4-aaaa-4aaa-9aaa-aaaaaaaaaaa4',
-    '88888888-8888-4888-9888-888888888888',
-    '33333333-3333-4333-8333-333333333333',
-    'The pgTap section is super actionable—thanks for the tips on arranging fixtures.',
-    NOW() - INTERVAL '1 day'
-  )
-ON CONFLICT (id) DO NOTHING;
+-- ============================================
+-- menu_client_members
+-- ============================================
+-- Requires auth.users.id = '944cd4ef-032c-4dc8-83e7-e4249db41356' to exist. Omit this block for a portable seed.
+INSERT INTO public.menu_client_members (id, client_id, user_id, role)
+VALUES (
+  '3ce20e60-8cb9-4f13-8d9b-72310b553866',
+  'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+  '944cd4ef-032c-4dc8-83e7-e4249db41356',
+  'owner'
+)
+ON CONFLICT (id) DO UPDATE SET
+  client_id = EXCLUDED.client_id,
+  user_id = EXCLUDED.user_id,
+  role = EXCLUDED.role;

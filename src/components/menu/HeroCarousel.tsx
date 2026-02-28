@@ -20,34 +20,12 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
   const idleCallbackRef = useRef<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Get localized title/subtitle for featured items
-  const getLocalizedTitle = (item: MenuFeaturedItem): string => {
-    const translations = item.translations as Record<
-      string,
-      { title?: string }
-    > | null;
-    if (translations?.[locale]?.title) {
-      return translations[locale].title;
-    }
-    if (locale === 'km' && item.title_km) {
-      return item.title_km;
-    }
-    return item.title;
-  };
+  // Localized title/subtitle (2 languages: en, km)
+  const getLocalizedTitle = (item: MenuFeaturedItem): string =>
+    locale === 'km' && item.title_km ? item.title_km : item.title;
 
-  const getLocalizedSubtitle = (item: MenuFeaturedItem): string | null => {
-    const translations = item.translations as Record<
-      string,
-      { subtitle?: string }
-    > | null;
-    if (translations?.[locale]?.subtitle) {
-      return translations[locale].subtitle;
-    }
-    if (locale === 'km' && item.subtitle_km) {
-      return item.subtitle_km;
-    }
-    return item.subtitle;
-  };
+  const getLocalizedSubtitle = (item: MenuFeaturedItem): string | null =>
+    locale === 'km' && item.subtitle_km ? item.subtitle_km : item.subtitle ?? null;
 
   // Keep initial payload light: render only first slide first, then add more during idle time.
   const visibleItems = useMemo(() => {
