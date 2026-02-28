@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { Drawer } from 'vaul';
 import { useMenuLocale, type TranslationKey } from './locale';
 import type { MenuClient } from './types';
+import { getSafeExternalUrl } from '@/utils/security/safe-url';
 
 interface RestaurantInfoDrawerProps {
     client: MenuClient;
@@ -53,6 +54,9 @@ export function RestaurantInfoDrawer({
     const socialLinks = client.social_links as Record<string, string> | null;
     const currentDay = getCurrentDay();
     const todayHours = openingHours?.[currentDay];
+
+    const safeInstagramUrl = getSafeExternalUrl(socialLinks?.instagram);
+    const safeFacebookUrl = getSafeExternalUrl(socialLinks?.facebook);
 
     return (
         <Drawer.Root open={isOpen} onOpenChange={(open) => !open && onClose()} modal>
@@ -205,9 +209,9 @@ export function RestaurantInfoDrawer({
                         {/* Social Links */}
                         {socialLinks && Object.keys(socialLinks).length > 0 && (
                             <div className="flex gap-3">
-                                {socialLinks.instagram && (
+                                {safeInstagramUrl && (
                                     <a
-                                        href={socialLinks.instagram}
+                                        href={safeInstagramUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl hover:opacity-90 transition-opacity"
@@ -216,9 +220,9 @@ export function RestaurantInfoDrawer({
                                         <span className="font-medium">Instagram</span>
                                     </a>
                                 )}
-                                {socialLinks.facebook && (
+                                {safeFacebookUrl && (
                                     <a
-                                        href={socialLinks.facebook}
+                                        href={safeFacebookUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-blue-600 text-white rounded-2xl hover:opacity-90 transition-opacity"

@@ -10,6 +10,13 @@ import {
   signInWithProviderSchema,
 } from '@/utils/zod-schemas';
 
+const AUTH_FAILURE_DELAY_MS = 750;
+const USER_SAFE_AUTH_ERROR_MESSAGE = 'Unable to process sign-in request';
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const normalizeEmail = (email: string) => email.trim().toLowerCase();
+
 /**
  * Signs in a user with email and password.
  * @param {Object} params - The parameters for sign in.
@@ -21,13 +28,15 @@ export const signInWithPasswordAction = actionClient
   .schema(signInSchema)
   .action(async ({ parsedInput: { email, password } }) => {
     const supabase = await createSupabaseClient();
+    const normalizedEmail = normalizeEmail(email);
 
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: normalizedEmail,
       password,
     });
 
     if (error) {
+      await wait(AUTH_FAILURE_DELAY_MS);
       throw new Error('Invalid login credentials');
     }
 
@@ -45,20 +54,21 @@ export const signInWithMagicLinkAction = actionClient
   .schema(signInWithMagicLinkSchema)
   .action(async ({ parsedInput: { email, next } }) => {
     const supabase = await createSupabaseClient();
+    const normalizedEmail = normalizeEmail(email);
     const redirectUrl = new URL(toSiteURL('/auth/callback'));
     const safeNextPath = getSafeNextPath(next);
     if (safeNextPath) {
       redirectUrl.searchParams.set('next', safeNextPath);
     }
     const { error } = await supabase.auth.signInWithOtp({
-      email,
+      email: normalizedEmail,
       options: {
         emailRedirectTo: redirectUrl.toString(),
       },
     });
 
     if (error) {
-      throw new Error(error.message);
+      throw new Error(USER_SAFE_AUTH_ERROR_MESSAGE);
     }
 
     // No need to return anything if the operation is successful
@@ -89,7 +99,7 @@ export const signInWithProviderAction = actionClient
     });
 
     if (error) {
-      throw new Error(error.message);
+      throw new Error(USER_SAFE_AUTH_ERROR_MESSAGE);
     }
 
     return { url: data.url };
