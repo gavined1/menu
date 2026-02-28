@@ -26,11 +26,11 @@ interface DigitalMenuProps {
 export function DigitalMenu({ data }: DigitalMenuProps) {
   const { client, categories, items, featuredItems } = data;
 
-  // Custom exchange rate from business settings (if any)
   const customExchangeRate = client.exchange_rate ?? undefined;
+  const clientCurrency = client.currency ?? null;
 
   return (
-    <MenuLocaleProvider customExchangeRate={customExchangeRate}>
+    <MenuLocaleProvider customExchangeRate={customExchangeRate} clientCurrency={clientCurrency}>
       <DigitalMenuContent
         client={client}
         categories={categories}

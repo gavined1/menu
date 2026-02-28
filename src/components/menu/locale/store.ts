@@ -28,16 +28,22 @@ export type LocalizableDescriptionItem = Pick<
 // TYPES
 // =============================================================================
 
+/** Client's base currency (how item prices are stored in DB). null = treat as USD. */
+export type ClientBaseCurrency = SupportedCurrency | null;
+
 interface MenuLocaleState {
   locale: SupportedLocale;
   currency: SupportedCurrency;
   customExchangeRate: number | null;
+  /** Base currency for stored prices (from menu_clients.currency). KHR = prices in DB are in KHR. */
+  clientCurrency: ClientBaseCurrency;
 }
 
 interface MenuLocaleStore extends MenuLocaleState {
   setLocale: (locale: SupportedLocale) => void;
   setCurrency: (currency: SupportedCurrency) => void;
   setCustomExchangeRate: (rate: number | null) => void;
+  setClientCurrency: (currency: ClientBaseCurrency) => void;
 }
 
 // =============================================================================
@@ -50,9 +56,11 @@ export const useMenuLocaleStore = create<MenuLocaleStore>()(
       locale: defaultLocale,
       currency: defaultCurrency,
       customExchangeRate: null,
+      clientCurrency: null,
       setLocale: (locale) => set({ locale }),
       setCurrency: (currency) => set({ currency }),
       setCustomExchangeRate: (rate) => set({ customExchangeRate: rate }),
+      setClientCurrency: (currency) => set({ clientCurrency: currency }),
     }),
     {
       name: 'menu-locale-storage',

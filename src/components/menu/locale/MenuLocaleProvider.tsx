@@ -7,6 +7,7 @@ import {
     getLocalizedDescription as getLocalizedDescriptionHelper,
     getLocalizedText as getLocalizedTextHelper,
     t as tHelper,
+    type ClientBaseCurrency,
     type LocalizableDescriptionItem,
     type LocalizableNameItem,
     useMenuLocaleStore,
@@ -20,18 +21,25 @@ import type { TranslationKey } from './translations';
 interface MenuLocaleProviderProps {
     children: ReactNode;
     customExchangeRate?: number;
+    /** Client's base currency (how prices are stored). KHR = stored prices are in KHR. */
+    clientCurrency?: ClientBaseCurrency;
 }
 
 export function MenuLocaleProvider({
     children,
     customExchangeRate,
+    clientCurrency = null,
 }: MenuLocaleProviderProps) {
     const setCustomExchangeRate = useMenuLocaleStore((s) => s.setCustomExchangeRate);
+    const setClientCurrency = useMenuLocaleStore((s) => s.setClientCurrency);
 
     useEffect(() => {
-        // Always update - use null when undefined to clear any stored value
         setCustomExchangeRate(customExchangeRate ?? null);
     }, [customExchangeRate, setCustomExchangeRate]);
+
+    useEffect(() => {
+        setClientCurrency(clientCurrency ?? null);
+    }, [clientCurrency, setClientCurrency]);
 
     return <>{children}</>;
 }
@@ -44,16 +52,23 @@ export function useMenuLocale() {
     const locale = useMenuLocaleStore((s) => s.locale);
     const currency = useMenuLocaleStore((s) => s.currency);
     const customExchangeRate = useMenuLocaleStore((s) => s.customExchangeRate);
+    const clientCurrency = useMenuLocaleStore((s) => s.clientCurrency);
     const setLocale = useMenuLocaleStore((s) => s.setLocale);
     const setCurrency = useMenuLocaleStore((s) => s.setCurrency);
 
     const exchangeRate = getExchangeRate(currency, customExchangeRate);
 
-    // Direct function calls to ensure re-render on state change
     const t = (key: TranslationKey) => tHelper(key, locale);
 
-    const formatPrice = (priceUSD: number) =>
-        formatPriceHelper(priceUSD, currency, locale, customExchangeRate);
+    /** Formats a price. Stored value is in client base currency (USD or KHR); converts to display currency. */
+    const formatPrice = (storedPrice: number) => {
+        const rate = customExchangeRate ?? 0;
+        const priceUSD =
+            clientCurrency === 'KHR' && rate > 0
+                ? storedPrice / rate
+                : storedPrice;
+        return formatPriceHelper(priceUSD, currency, locale, customExchangeRate);
+    };
 
     const getLocalizedText = (item: LocalizableNameItem) =>
         getLocalizedTextHelper(item, locale);
