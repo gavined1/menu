@@ -77,9 +77,9 @@ const phoneEntrance = {
   hidden: {
     opacity: 0,
     y: 120,
-    rotateX: 60,
+    rotateX: 20,
     scale: 0.92,
-    transformOrigin: 'right bottom',
+    transformOrigin: 'center bottom',
   },
   visible: {
     opacity: 1,
@@ -115,9 +115,9 @@ export default function LandingPage() {
   });
 
   // Background layer parallax (slower movement for depth)
-  const bgY = useTransform(scrollY, [0, 800], [0, 48]);
+  const bgY = useTransform(scrollY, [0, 500], [0, 48]);
   const bgYSmooth = useSpring(bgY, {
-    stiffness: 80,
+    stiffness: 50,
     damping: 30,
     restDelta: 0.001,
   });
