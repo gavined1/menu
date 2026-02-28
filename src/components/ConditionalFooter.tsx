@@ -9,8 +9,10 @@ export function ConditionalFooter() {
                       pathname?.includes('/sign-up') || 
                       pathname?.includes('/forgot-password') ||
                       pathname?.includes('/update-password');
+  // Home page renders its own footer so we don't duplicate
+  const isHomePage = pathname === '/' || pathname === '';
 
-  if (isLoginPage) {
+  if (isLoginPage || isHomePage) {
     return null;
   }
 

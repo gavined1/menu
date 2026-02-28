@@ -1,5 +1,6 @@
 'use client';
 
+import Footer from '@/components/Footer';
 import { LightBeams } from '@/components/landing/LightBeams';
 import {
   ArrowRight,
@@ -16,14 +17,191 @@ import {
   Smartphone,
   Utensils,
 } from 'lucide-react';
+import { stagger } from 'motion';
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRef } from 'react';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+const fadeUpStagger = {
+  visible: {
+    opacity: 1,
+    transition: {
+      when: 'beforeChildren',
+      delayChildren: stagger(0.08),
+      staggerChildren: 0.06,
+    },
+  },
+  hidden: { opacity: 0 },
+};
+const easeOutExpo = [0.22, 1, 0.36, 1] as const;
+const sectionFade = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: easeOutExpo },
+  },
+};
+/** Parent-driven stagger: use with a container that has staggerChildren + delayChildren */
+const cardStaggerContainer = {
+  visible: {
+    transition: {
+      when: 'afterChildren',
+      staggerChildren: 0.06,
+      delayChildren: 0.08,
+    },
+  },
+  hidden: {},
+};
+const cardItemVariant = {
+  hidden: { opacity: 0, y: 16 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: easeOutExpo },
+  },
+};
+
+/** Interactive card hover/tap – lift, scale (omit when reduced motion) */
+function getCardInteractive(reduceMotion: boolean | null) {
+  if (reduceMotion) return {};
+  return {
+    whileHover: {
+      y: -6,
+      scale: 1.02,
+      transition: { type: 'spring' as const, stiffness: 400, damping: 25 },
+    },
+    whileTap: {
+      scale: 0.98,
+      transition: { duration: 0.1 },
+    },
+  };
+}
+
+/** Phone mockup entrance – comes from bottom with tilt, then lands straight */
+const phoneEntrance = {
+  hidden: {
+    opacity: 0,
+    y: 120,
+    rotateX: 28,
+    scale: 0.92,
+    transformOrigin: 'center bottom',
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    scale: 1,
+    transformOrigin: 'center bottom',
+    transition: {
+      duration: 1.2,
+      ease: easeOutExpo,
+      delay: 0.25,
+    },
+  },
+};
+
+/** Demo block card – subtler interaction */
+function getDemoCardInteractive(reduceMotion: boolean | null) {
+  if (reduceMotion) return {};
+  return {
+    whileHover: {
+      scale: 1.01,
+      transition: { type: 'spring' as const, stiffness: 300, damping: 25 },
+    },
+    whileTap: {
+      scale: 0.995,
+      transition: { duration: 0.1 },
+    },
+  };
+}
 
 export default function LandingPage() {
+  const shouldReduceMotion = useReducedMotion();
+  const demoRef = useRef<HTMLElement>(null);
+  const iconHover = shouldReduceMotion
+    ? {}
+    : {
+      whileHover: { scale: 1.08 },
+      transition: { type: 'spring' as const, stiffness: 400, damping: 20 },
+    };
+  const iconHoverUseCase = shouldReduceMotion
+    ? {}
+    : {
+      whileHover: { scale: 1.1 },
+      transition: { type: 'spring' as const, stiffness: 400, damping: 20 },
+    };
+  const { scrollYProgress, scrollY } = useScroll();
+  const { scrollYProgress: demoProgress } = useScroll({
+    target: demoRef,
+    offset: ['start end', 'center center'],
+  });
+
+  // Scroll progress bar (smooth)
+  const progressScaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  // Hero parallax: content moves up slightly as you scroll (0–600px scroll → 0 to -36px)
+  const heroY = useTransform(scrollY, [0, 600], [0, -36]);
+  const heroYSmooth = useSpring(heroY, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  // Background layer parallax (slower movement for depth)
+  const bgY = useTransform(scrollY, [0, 800], [0, 48]);
+  const bgYSmooth = useSpring(bgY, {
+    stiffness: 80,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  // Hero opacity fade as you scroll past
+  const heroOpacity = useTransform(scrollY, [0, 280, 420], [1, 0.6, 0.15]);
+  const heroOpacitySmooth = useSpring(heroOpacity, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  // Demo card: scale up as section enters view
+  const demoScale = useTransform(demoProgress, [0, 0.5, 1], [0.97, 1, 1]);
+  const demoScaleSmooth = useSpring(demoScale, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
   return (
-    <div className="antialiased relative z-0 min-h-screen overflow-hidden bg-white text-slate-900 selection:bg-orange-100 selection:text-orange-900">
+    <div className="antialiased relative z-0 overflow-hidden bg-white text-slate-900 selection:bg-orange-100 selection:text-orange-900">
+      {/* Scroll progress bar */}
+      {!shouldReduceMotion && (
+        <motion.div
+          className="fixed top-0 left-0 right-0 z-100 h-0.5 origin-left bg-linear-to-r from-orange-500 to-amber-500"
+          style={{ scaleX: progressScaleX }}
+          aria-hidden
+        />
+      )}
       {/* Background Layer (non-interactive) – z-0 on parent so -z-10 is scoped here, not behind layout */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
+      <motion.div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={shouldReduceMotion ? undefined : { y: bgYSmooth }}
+      >
         <div className="absolute inset-0 bg-linear-to-b from-slate-50 via-white to-slate-50" />
         {/* Grid: lighter on mobile */}
         <div
@@ -54,7 +232,7 @@ export default function LandingPage() {
         <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full blur-[100px] bg-amber-200/30 hidden md:block" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[150px] bg-slate-200/30 hidden md:block" />
         <LightBeams />
-      </div>
+      </motion.div>
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b bg-white/80 border-slate-200/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -108,28 +286,54 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="pt-36 pb-24 md:pt-44 md:pb-32 px-6 overflow-hidden relative">
-        <div className="max-w-5xl mx-auto text-center animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-8 bg-orange-50 border border-orange-200">
+        <motion.div
+          className="max-w-5xl mx-auto text-center"
+          initial="hidden"
+          animate="visible"
+          variants={fadeUpStagger}
+          style={
+            shouldReduceMotion
+              ? undefined
+              : { y: heroYSmooth, opacity: heroOpacitySmooth }
+          }
+        >
+          <motion.div
+            variants={fadeUp}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-8 bg-orange-50 border border-orange-200"
+          >
             <span className="text-base">🇰🇭</span>
             <span className="text-xs font-medium uppercase tracking-wide text-orange-600">
               Made in Cambodia
             </span>
-          </div>
+          </motion.div>
 
-          <h1 className="text-5xl md:text-7xl font-semibold tracking-tighter mb-6 leading-[1.1] text-slate-900">
+          <motion.h1
+            variants={fadeUp}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="text-5xl md:text-7xl font-semibold tracking-tighter mb-6 leading-[1.1] text-slate-900"
+          >
             Showcase your products <br className="hidden md:block" />
             <span className="bg-linear-to-r from-orange-500 via-amber-500 to-orange-500 bg-clip-text text-transparent">
               beautifully.
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="text-lg mb-12 max-w-2xl mx-auto font-normal leading-relaxed text-slate-600">
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="text-lg mb-12 max-w-2xl mx-auto font-normal leading-relaxed text-slate-600"
+          >
             The mobile-first digital catalog for restaurants, retail, and
             hotels. Instant updates, dual currency support, and zero printing
             costs.
-          </p>
+          </motion.p>
 
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+          <motion.div
+            variants={fadeUp}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col md:flex-row items-center justify-center gap-4"
+          >
             <a
               href="https://t.me/gavined"
               target="_blank"
@@ -138,20 +342,34 @@ export default function LandingPage() {
             >
               Get Started <ArrowRight className="w-4 h-4" />
             </a>
-            <Link
-              href="/omni"
+            <a
+              href="#demo"
               className="w-full md:w-auto px-8 py-3 text-sm font-medium rounded-full transition-all flex items-center justify-center gap-2 backdrop-blur-sm bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200"
             >
               <ScanLine className="w-4 h-4" /> View Demo
-            </Link>
-          </div>
-        </div>
+            </a>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* Interactive Catalog Preview */}
-      <section id="demo" className="pb-28 px-6 relative">
+      <motion.section
+        ref={demoRef}
+        id="demo"
+        className="pb-28 px-6 relative"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-60px', amount: 'some' }}
+        variants={sectionFade}
+      >
         <div className="max-w-6xl mx-auto">
-          <div className="rounded-3xl p-4 md:p-12 shadow-2xl bg-white/90 border-slate-200 shadow-slate-200/50">
+          <motion.div
+            className="rounded-3xl p-4 md:p-12 shadow-2xl bg-white/90 border-slate-200 shadow-slate-200/50 cursor-pointer"
+            style={
+              shouldReduceMotion ? undefined : { scale: demoScaleSmooth }
+            }
+            {...getDemoCardInteractive(shouldReduceMotion)}
+          >
             <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
               {/* Left: Feature Highlights */}
               <div className="space-y-8">
@@ -217,7 +435,14 @@ export default function LandingPage() {
               </div>
 
               {/* Right: Phone UI Mockup with Scaled Iframe */}
-              <div className="relative flex justify-center">
+              <motion.div
+                className="relative flex justify-center perspective-[900px]"
+                style={{ perspectiveOrigin: 'center 60%' }}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-40px', amount: 0.2 }}
+                variants={phoneEntrance}
+              >
                 {/* Glow effect behind phone */}
                 <div className="absolute inset-0 flex justify-center items-center">
                   <div
@@ -265,14 +490,21 @@ export default function LandingPage() {
                     className="absolute top-0 left-1/2 -translate-x-1/2 h-6 w-28 rounded-b-xl z-20 bg-slate-900"
                   />
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Bento Grid Features */}
-      <section id="features" className="py-28 relative">
+      <motion.section
+        id="features"
+        className="py-28 relative"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-80px', amount: 'some' }}
+        variants={sectionFade}
+      >
         {/* Section beam decoration */}
         <div
           className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent to-transparent via-slate-200"
@@ -293,14 +525,27 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-40px' }}
+            variants={cardStaggerContainer}
+          >
             {/* Feature 1: Mobile First */}
-            <div className="group p-8 rounded-2xl transition-all bg-slate-50 border border-slate-200 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-100">
-              <div className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-cyan-50 border border-cyan-100">
+            <motion.div
+              variants={cardItemVariant}
+              {...getCardInteractive(shouldReduceMotion)}
+              className="group p-8 rounded-2xl cursor-pointer transition-all bg-slate-50 border border-slate-200 hover:border-cyan-300 hover:shadow-xl hover:shadow-cyan-100/40"
+            >
+              <motion.div
+                className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-cyan-50 border border-cyan-100"
+                {...iconHover}
+              >
                 <Smartphone
                   className="w-5 h-5 text-cyan-600"
                 />
-              </div>
+              </motion.div>
               <h3
                 className="text-sm font-semibold mb-2 text-slate-900"
               >
@@ -309,22 +554,25 @@ export default function LandingPage() {
               <p
                 className="text-sm leading-relaxed text-slate-600"
               >
-                Optimized for smartphones where 80% of customers browse. Fast
+                Optimized for smartphones where 80% of customers browse.                 Fast
                 loading even on 3G connections.
               </p>
-            </div>
+            </motion.div>
 
             {/* Feature 2: Smart Search */}
-            <div
-              className="group p-8 rounded-2xl transition-all bg-slate-50 border border-slate-200 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-100"
+            <motion.div
+              variants={cardItemVariant}
+              {...getCardInteractive(shouldReduceMotion)}
+              className="group p-8 rounded-2xl cursor-pointer transition-all bg-slate-50 border border-slate-200 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-100/40"
             >
-              <div
+              <motion.div
                 className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-indigo-50 border border-indigo-100"
+                {...iconHover}
               >
                 <Search
                   className="w-5 h-5 text-indigo-600"
                 />
-              </div>
+              </motion.div>
               <h3
                 className="text-sm font-semibold mb-2 text-slate-900"
               >
@@ -336,19 +584,22 @@ export default function LandingPage() {
                 Customers find items instantly as they type. Filter by category,
                 dietary tags, or specials.
               </p>
-            </div>
+            </motion.div>
 
             {/* Feature 3: Social Sharing */}
-            <div
-              className="group p-8 rounded-2xl transition-all bg-slate-50 border border-slate-200 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-100"
+            <motion.div
+              variants={cardItemVariant}
+              {...getCardInteractive(shouldReduceMotion)}
+              className="group p-8 rounded-2xl cursor-pointer transition-all bg-slate-50 border border-slate-200 hover:border-orange-300 hover:shadow-xl hover:shadow-orange-100/40"
             >
-              <div
+              <motion.div
                 className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-orange-50 border border-orange-100"
+                {...iconHover}
               >
                 <Share2
                   className="w-5 h-5 text-orange-600"
                 />
-              </div>
+              </motion.div>
               <h3
                 className="text-sm font-semibold mb-2 text-slate-900"
               >
@@ -360,20 +611,23 @@ export default function LandingPage() {
                 Share specific items directly to Telegram, WhatsApp, or Facebook
                 with rich link previews.
               </p>
-            </div>
+            </motion.div>
 
             {/* Feature 4 (Span 2): Visuals */}
-            <div
-              className="md:col-span-2 group p-8 rounded-2xl relative overflow-hidden linear-to-br from-orange-50 via-amber-50/50 to-white border border-orange-200"
+            <motion.div
+              variants={cardItemVariant}
+              {...getCardInteractive(shouldReduceMotion)}
+              className="md:col-span-2 group p-8 rounded-2xl relative overflow-hidden cursor-pointer linear-to-br from-orange-50 via-amber-50/50 to-white border border-orange-200 hover:border-orange-400 hover:shadow-xl hover:shadow-orange-200/30"
             >
               <div className="relative z-10">
-                <div
+                <motion.div
                   className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-orange-100 border border-orange-200"
+                  {...iconHover}
                 >
                   <ImageIcon
                     className="w-5 h-5 text-orange-600"
                   />
-                </div>
+                </motion.div>
                 <h3
                   className="text-sm font-semibold mb-2 text-slate-900"
                 >
@@ -391,20 +645,23 @@ export default function LandingPage() {
               <div
                 className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full blur-3xl pointer-events-none bg-orange-300 opacity-20"
               />
-            </div>
+            </motion.div>
 
             {/* Feature 5: Security/Tech */}
-            <div
-              className="group p-8 rounded-2xl transition-all flex flex-col justify-between bg-slate-50 border border-slate-200 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-100"
+            <motion.div
+              variants={cardItemVariant}
+              {...getCardInteractive(shouldReduceMotion)}
+              className="group p-8 rounded-2xl cursor-pointer transition-all flex flex-col justify-between bg-slate-50 border border-slate-200 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-100/40"
             >
               <div>
-                <div
+                <motion.div
                   className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-emerald-50 border border-emerald-100"
+                  {...iconHover}
                 >
                   <ShieldCheck
                     className="w-5 h-5 text-emerald-600"
                   />
-                </div>
+                </motion.div>
                 <h3
                   className="text-sm font-semibold mb-2 text-slate-900"
                 >
@@ -417,13 +674,20 @@ export default function LandingPage() {
                   for SEO.
                 </p>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Use Cases Section */}
-      <section id="use-cases" className="py-24 relative">
+      <motion.section
+        id="use-cases"
+        className="py-24 relative"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-60px' }}
+        variants={sectionFade}
+      >
         {/* Section beam decorations */}
         <div
           className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent to-transparent via-slate-200"
@@ -446,12 +710,25 @@ export default function LandingPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-40px' }}
+            variants={cardStaggerContainer}
+          >
             {/* Use Case 1 */}
-            <div className="p-6 rounded-xl text-center transition-all cursor-default group bg-white border border-slate-200 hover:border-orange-300 hover:shadow-lg hover:shadow-orange-100/50">
-              <div className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-orange-50 text-orange-600 group-hover:bg-orange-100">
+            <motion.div
+              variants={cardItemVariant}
+              {...getCardInteractive(shouldReduceMotion)}
+              className="p-6 rounded-xl text-center transition-all cursor-pointer group bg-white border border-slate-200 hover:border-orange-300 hover:shadow-xl hover:shadow-orange-100/50"
+            >
+              <motion.div
+                className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-orange-50 text-orange-600 group-hover:bg-orange-100"
+                {...iconHoverUseCase}
+              >
                 <Utensils className="w-5 h-5" />
-              </div>
+              </motion.div>
               <h3
                 className="text-sm font-semibold text-slate-900"
               >
@@ -462,13 +739,20 @@ export default function LandingPage() {
               >
                 Digital menus & specials
               </p>
-            </div>
+            </motion.div>
 
             {/* Use Case 2 */}
-            <div className="p-6 rounded-xl text-center transition-all cursor-default group bg-white border border-slate-200 hover:border-cyan-300 hover:shadow-lg hover:shadow-cyan-100/50">
-              <div className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-cyan-50 text-cyan-600 group-hover:bg-cyan-100">
+            <motion.div
+              variants={cardItemVariant}
+              {...getCardInteractive(shouldReduceMotion)}
+              className="p-6 rounded-xl text-center transition-all cursor-pointer group bg-white border border-slate-200 hover:border-cyan-300 hover:shadow-xl hover:shadow-cyan-100/50"
+            >
+              <motion.div
+                className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-cyan-50 text-cyan-600 group-hover:bg-cyan-100"
+                {...iconHoverUseCase}
+              >
                 <ShoppingBag className="w-5 h-5" />
-              </div>
+              </motion.div>
               <h3
                 className="text-sm font-semibold text-slate-900"
               >
@@ -479,13 +763,20 @@ export default function LandingPage() {
               >
                 Product catalogs & inventory
               </p>
-            </div>
+            </motion.div>
 
             {/* Use Case 3 */}
-            <div className="p-6 rounded-xl text-center transition-all cursor-default group bg-white border border-slate-200 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/50">
-              <div className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100">
+            <motion.div
+              variants={cardItemVariant}
+              {...getCardInteractive(shouldReduceMotion)}
+              className="p-6 rounded-xl text-center transition-all cursor-pointer group bg-white border border-slate-200 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-100/50"
+            >
+              <motion.div
+                className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100"
+                {...iconHoverUseCase}
+              >
                 <Hotel className="w-5 h-5" />
-              </div>
+              </motion.div>
               <h3
                 className="text-sm font-semibold text-slate-900"
               >
@@ -496,13 +787,20 @@ export default function LandingPage() {
               >
                 Room service & amenities
               </p>
-            </div>
+            </motion.div>
 
             {/* Use Case 4 */}
-            <div className="p-6 rounded-xl text-center transition-all cursor-default group bg-white border border-slate-200 hover:border-purple-300 hover:shadow-lg hover:shadow-purple-100/50">
-              <div className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-purple-50 text-purple-600 group-hover:bg-purple-100">
+            <motion.div
+              variants={cardItemVariant}
+              {...getCardInteractive(shouldReduceMotion)}
+              className="p-6 rounded-xl text-center transition-all cursor-pointer group bg-white border border-slate-200 hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/50"
+            >
+              <motion.div
+                className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-purple-50 text-purple-600 group-hover:bg-purple-100"
+                {...iconHoverUseCase}
+              >
                 <Bus className="w-5 h-5" />
-              </div>
+              </motion.div>
               <h3
                 className="text-sm font-semibold text-slate-900"
               >
@@ -513,13 +811,19 @@ export default function LandingPage() {
               >
                 Routes & ticketing
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* CTA Section */}
-      <section className="pt-28 pb-32 px-6 relative">
+      <motion.section
+        className="pt-28 pb-32 px-6 relative"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-80px' }}
+        variants={sectionFade}
+      >
         {/* CTA glow effect */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] rounded-full blur-[100px] bg-linear-to-r from-orange-200/50 via-amber-200/30 to-slate-200/50" />
@@ -551,7 +855,9 @@ export default function LandingPage() {
             Proudly built in Cambodia 🇰🇭
           </p>
         </div>
-      </section>
+      </motion.section>
+
+      <Footer />
     </div>
   );
 }
