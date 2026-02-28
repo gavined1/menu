@@ -51,9 +51,20 @@ export default function LandingPage() {
           }`}
         />
 
-        {/* Premium chess-grid texture */}
+        {/* Grid line svg + premium texture */}
         <div
-          className={`absolute inset-0 ${isDark ? 'opacity-70' : 'opacity-90'}`}
+          className={`absolute inset-0 ${isDark ? 'opacity-[0.78]' : 'opacity-[0.88]'}`}
+          style={{
+            backgroundImage: isDark
+              ? "url('/patterns-grid-dark.svg')"
+              : "url('/patterns-grid-light.svg')",
+            backgroundSize: '120px 120px',
+            backgroundPosition: 'center center',
+          }}
+        />
+
+        <div
+          className={`absolute inset-0 ${isDark ? 'opacity-35' : 'opacity-45'}`}
           style={{
             backgroundImage: isDark
               ? [
@@ -70,8 +81,6 @@ export default function LandingPage() {
                 ].join(','),
             backgroundSize: '48px 48px, 48px 48px, 96px 96px, 96px 96px',
             backgroundPosition: 'center center, center center, 0 0, 48px 48px',
-            maskImage:
-              'radial-gradient(ellipse at center, black 56%, rgba(0,0,0,0.92) 68%, transparent 96%)',
           }}
         />
 
@@ -266,6 +275,38 @@ export default function LandingPage() {
             >
               <ScanLine className="w-4 h-4" /> View Demo
             </Link>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
+            {[
+              ['1 minute', 'To publish updates'],
+              ['2 languages', 'Khmer + English ready'],
+              ['0 printing costs', 'Always up-to-date menus'],
+            ].map(([value, label]) => (
+              <div
+                key={label}
+                className={`rounded-2xl px-4 py-3 text-left backdrop-blur-sm border ${
+                  isDark
+                    ? 'bg-white/5 border-white/10'
+                    : 'bg-white/70 border-slate-200/80'
+                }`}
+              >
+                <p
+                  className={`text-sm font-semibold ${
+                    isDark ? 'text-white' : 'text-slate-900'
+                  }`}
+                >
+                  {value}
+                </p>
+                <p
+                  className={`text-xs mt-1 ${
+                    isDark ? 'text-slate-400' : 'text-slate-600'
+                  }`}
+                >
+                  {label}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
