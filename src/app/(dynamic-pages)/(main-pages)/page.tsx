@@ -27,7 +27,6 @@ import {
 } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef } from 'react';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -46,48 +45,32 @@ const fadeUpStagger = {
 };
 const easeOutExpo = [0.22, 1, 0.36, 1] as const;
 const sectionFade = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 28 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: easeOutExpo },
+    transition: { duration: 0.6, ease: easeOutExpo },
   },
 };
 /** Parent-driven stagger: use with a container that has staggerChildren + delayChildren */
 const cardStaggerContainer = {
   visible: {
     transition: {
-      when: 'afterChildren',
-      staggerChildren: 0.06,
-      delayChildren: 0.08,
+      when: 'beforeChildren',
+      staggerChildren: 0.1,
+      delayChildren: 0.12,
     },
   },
   hidden: {},
 };
 const cardItemVariant = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: easeOutExpo },
+    transition: { duration: 0.55, ease: easeOutExpo },
   },
 };
-
-/** Interactive card hover/tap – lift, scale (omit when reduced motion) */
-function getCardInteractive(reduceMotion: boolean | null) {
-  if (reduceMotion) return {};
-  return {
-    whileHover: {
-      y: -6,
-      scale: 1.02,
-      transition: { type: 'spring' as const, stiffness: 400, damping: 25 },
-    },
-    whileTap: {
-      scale: 0.98,
-      transition: { duration: 0.1 },
-    },
-  };
-}
 
 /** Phone mockup entrance – comes from bottom with tilt, then lands straight */
 const phoneEntrance = {
@@ -105,48 +88,16 @@ const phoneEntrance = {
     scale: 1,
     transformOrigin: 'center bottom',
     transition: {
-      duration: 1.2,
+      duration: 3,
       ease: easeOutExpo,
       delay: 0.25,
     },
   },
 };
 
-/** Demo block card – subtler interaction */
-function getDemoCardInteractive(reduceMotion: boolean | null) {
-  if (reduceMotion) return {};
-  return {
-    whileHover: {
-      scale: 1.01,
-      transition: { type: 'spring' as const, stiffness: 300, damping: 25 },
-    },
-    whileTap: {
-      scale: 0.995,
-      transition: { duration: 0.1 },
-    },
-  };
-}
-
 export default function LandingPage() {
   const shouldReduceMotion = useReducedMotion();
-  const demoRef = useRef<HTMLElement>(null);
-  const iconHover = shouldReduceMotion
-    ? {}
-    : {
-      whileHover: { scale: 1.08 },
-      transition: { type: 'spring' as const, stiffness: 400, damping: 20 },
-    };
-  const iconHoverUseCase = shouldReduceMotion
-    ? {}
-    : {
-      whileHover: { scale: 1.1 },
-      transition: { type: 'spring' as const, stiffness: 400, damping: 20 },
-    };
   const { scrollYProgress, scrollY } = useScroll();
-  const { scrollYProgress: demoProgress } = useScroll({
-    target: demoRef,
-    offset: ['start end', 'center center'],
-  });
 
   // Scroll progress bar (smooth)
   const progressScaleX = useSpring(scrollYProgress, {
@@ -174,14 +125,6 @@ export default function LandingPage() {
   // Hero opacity fade as you scroll past
   const heroOpacity = useTransform(scrollY, [0, 280, 420], [1, 0.6, 0.15]);
   const heroOpacitySmooth = useSpring(heroOpacity, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
-
-  // Demo card: scale up as section enters view
-  const demoScale = useTransform(demoProgress, [0, 0.5, 1], [0.97, 1, 1]);
-  const demoScaleSmooth = useSpring(demoScale, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001,
@@ -354,21 +297,16 @@ export default function LandingPage() {
 
       {/* Interactive Catalog Preview */}
       <motion.section
-        ref={demoRef}
         id="demo"
         className="pb-28 px-6 relative"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: '-60px', amount: 'some' }}
+        viewport={{ once: true, margin: '-80px', amount: 0.2 }}
         variants={sectionFade}
       >
         <div className="max-w-6xl mx-auto">
           <motion.div
-            className="rounded-3xl p-4 md:p-12 shadow-2xl bg-white/90 border-slate-200 shadow-slate-200/50 cursor-pointer"
-            style={
-              shouldReduceMotion ? undefined : { scale: demoScaleSmooth }
-            }
-            {...getDemoCardInteractive(shouldReduceMotion)}
+            className="rounded-3xl p-4 md:p-12 shadow-2xl bg-white/90 border-slate-200 shadow-slate-200/50"
           >
             <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
               {/* Left: Feature Highlights */}
@@ -529,23 +467,19 @@ export default function LandingPage() {
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
+            viewport={{ once: true, margin: '-80px', amount: 0.15 }}
             variants={cardStaggerContainer}
           >
             {/* Feature 1: Mobile First */}
             <motion.div
               variants={cardItemVariant}
-              {...getCardInteractive(shouldReduceMotion)}
-              className="group p-8 rounded-2xl cursor-pointer transition-all bg-slate-50 border border-slate-200 hover:border-cyan-300 hover:shadow-xl hover:shadow-cyan-100/40"
+              className="group p-8 rounded-2xl bg-slate-50 border border-slate-200"
             >
-              <motion.div
-                className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-cyan-50 border border-cyan-100"
-                {...iconHover}
-              >
+              <div className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-cyan-50 border border-cyan-100">
                 <Smartphone
                   className="w-5 h-5 text-cyan-600"
                 />
-              </motion.div>
+              </div>
               <h3
                 className="text-sm font-semibold mb-2 text-slate-900"
               >
@@ -562,17 +496,13 @@ export default function LandingPage() {
             {/* Feature 2: Smart Search */}
             <motion.div
               variants={cardItemVariant}
-              {...getCardInteractive(shouldReduceMotion)}
-              className="group p-8 rounded-2xl cursor-pointer transition-all bg-slate-50 border border-slate-200 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-100/40"
+              className="group p-8 rounded-2xl bg-slate-50 border border-slate-200"
             >
-              <motion.div
-                className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-indigo-50 border border-indigo-100"
-                {...iconHover}
-              >
+              <div className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-indigo-50 border border-indigo-100">
                 <Search
                   className="w-5 h-5 text-indigo-600"
                 />
-              </motion.div>
+              </div>
               <h3
                 className="text-sm font-semibold mb-2 text-slate-900"
               >
@@ -589,17 +519,13 @@ export default function LandingPage() {
             {/* Feature 3: Social Sharing */}
             <motion.div
               variants={cardItemVariant}
-              {...getCardInteractive(shouldReduceMotion)}
-              className="group p-8 rounded-2xl cursor-pointer transition-all bg-slate-50 border border-slate-200 hover:border-orange-300 hover:shadow-xl hover:shadow-orange-100/40"
+              className="group p-8 rounded-2xl bg-slate-50 border border-slate-200"
             >
-              <motion.div
-                className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-orange-50 border border-orange-100"
-                {...iconHover}
-              >
+              <div className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-orange-50 border border-orange-100">
                 <Share2
                   className="w-5 h-5 text-orange-600"
                 />
-              </motion.div>
+              </div>
               <h3
                 className="text-sm font-semibold mb-2 text-slate-900"
               >
@@ -616,18 +542,14 @@ export default function LandingPage() {
             {/* Feature 4 (Span 2): Visuals */}
             <motion.div
               variants={cardItemVariant}
-              {...getCardInteractive(shouldReduceMotion)}
-              className="md:col-span-2 group p-8 rounded-2xl relative overflow-hidden cursor-pointer linear-to-br from-orange-50 via-amber-50/50 to-white border border-orange-200 hover:border-orange-400 hover:shadow-xl hover:shadow-orange-200/30"
+              className="md:col-span-2 group p-8 rounded-2xl relative overflow-hidden linear-to-br from-orange-50 via-amber-50/50 to-white border border-orange-200"
             >
               <div className="relative z-10">
-                <motion.div
-                  className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-orange-100 border border-orange-200"
-                  {...iconHover}
-                >
+                <div className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-orange-100 border border-orange-200">
                   <ImageIcon
                     className="w-5 h-5 text-orange-600"
                   />
-                </motion.div>
+                </div>
                 <h3
                   className="text-sm font-semibold mb-2 text-slate-900"
                 >
@@ -650,18 +572,14 @@ export default function LandingPage() {
             {/* Feature 5: Security/Tech */}
             <motion.div
               variants={cardItemVariant}
-              {...getCardInteractive(shouldReduceMotion)}
-              className="group p-8 rounded-2xl cursor-pointer transition-all flex flex-col justify-between bg-slate-50 border border-slate-200 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-100/40"
+              className="group p-8 rounded-2xl flex flex-col justify-between bg-slate-50 border border-slate-200"
             >
               <div>
-                <motion.div
-                  className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-emerald-50 border border-emerald-100"
-                  {...iconHover}
-                >
+                <div className="h-10 w-10 rounded-lg flex items-center justify-center mb-6 bg-emerald-50 border border-emerald-100">
                   <ShieldCheck
                     className="w-5 h-5 text-emerald-600"
                   />
-                </motion.div>
+                </div>
                 <h3
                   className="text-sm font-semibold mb-2 text-slate-900"
                 >
@@ -714,21 +632,17 @@ export default function LandingPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-4"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
+            viewport={{ once: true, margin: '-80px', amount: 0.15 }}
             variants={cardStaggerContainer}
           >
             {/* Use Case 1 */}
             <motion.div
               variants={cardItemVariant}
-              {...getCardInteractive(shouldReduceMotion)}
-              className="p-6 rounded-xl text-center transition-all cursor-pointer group bg-white border border-slate-200 hover:border-orange-300 hover:shadow-xl hover:shadow-orange-100/50"
+              className="p-6 rounded-xl text-center bg-white border border-slate-200"
             >
-              <motion.div
-                className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-orange-50 text-orange-600 group-hover:bg-orange-100"
-                {...iconHoverUseCase}
-              >
+              <div className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 bg-orange-50 text-orange-600">
                 <Utensils className="w-5 h-5" />
-              </motion.div>
+              </div>
               <h3
                 className="text-sm font-semibold text-slate-900"
               >
@@ -744,15 +658,11 @@ export default function LandingPage() {
             {/* Use Case 2 */}
             <motion.div
               variants={cardItemVariant}
-              {...getCardInteractive(shouldReduceMotion)}
-              className="p-6 rounded-xl text-center transition-all cursor-pointer group bg-white border border-slate-200 hover:border-cyan-300 hover:shadow-xl hover:shadow-cyan-100/50"
+              className="p-6 rounded-xl text-center bg-white border border-slate-200"
             >
-              <motion.div
-                className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-cyan-50 text-cyan-600 group-hover:bg-cyan-100"
-                {...iconHoverUseCase}
-              >
+              <div className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 bg-cyan-50 text-cyan-600">
                 <ShoppingBag className="w-5 h-5" />
-              </motion.div>
+              </div>
               <h3
                 className="text-sm font-semibold text-slate-900"
               >
@@ -768,15 +678,11 @@ export default function LandingPage() {
             {/* Use Case 3 */}
             <motion.div
               variants={cardItemVariant}
-              {...getCardInteractive(shouldReduceMotion)}
-              className="p-6 rounded-xl text-center transition-all cursor-pointer group bg-white border border-slate-200 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-100/50"
+              className="p-6 rounded-xl text-center bg-white border border-slate-200"
             >
-              <motion.div
-                className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100"
-                {...iconHoverUseCase}
-              >
+              <div className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 bg-emerald-50 text-emerald-600">
                 <Hotel className="w-5 h-5" />
-              </motion.div>
+              </div>
               <h3
                 className="text-sm font-semibold text-slate-900"
               >
@@ -792,15 +698,11 @@ export default function LandingPage() {
             {/* Use Case 4 */}
             <motion.div
               variants={cardItemVariant}
-              {...getCardInteractive(shouldReduceMotion)}
-              className="p-6 rounded-xl text-center transition-all cursor-pointer group bg-white border border-slate-200 hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/50"
+              className="p-6 rounded-xl text-center bg-white border border-slate-200"
             >
-              <motion.div
-                className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 transition-colors bg-purple-50 text-purple-600 group-hover:bg-purple-100"
-                {...iconHoverUseCase}
-              >
+              <div className="mx-auto h-12 w-12 rounded-full flex items-center justify-center mb-4 bg-purple-50 text-purple-600">
                 <Bus className="w-5 h-5" />
-              </motion.div>
+              </div>
               <h3
                 className="text-sm font-semibold text-slate-900"
               >
