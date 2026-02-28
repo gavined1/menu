@@ -3,10 +3,12 @@ import {
   DEFAULT_AUTH_REDIRECT_PATH,
   getSafeNextPath,
 } from '@/utils/auth/safe-next';
+import { toSiteURL } from '@/utils/helpers';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
+  const siteUrl = new URL(toSiteURL('/'));
   const tokenHash = searchParams.get('token_hash');
   const safeNextPath = getSafeNextPath(
     searchParams.get('next'),
@@ -27,5 +29,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/auth/auth-code-error', req.url));
   }
 
-  return NextResponse.redirect(new URL(safeNextPath, req.url));
+  return NextResponse.redirect(new URL(safeNextPath, siteUrl));
 }

@@ -1,6 +1,5 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
-import { match } from 'path-to-regexp';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -34,7 +33,7 @@ export async function updateSession(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  const protectedPages = [
+  const protectedPagePrefixes = [
     '/dashboard',
     '/private-item',
     '/private-items',
@@ -42,18 +41,17 @@ export async function updateSession(request: NextRequest) {
     '/item',
   ];
 
+  const isProtectedPath = protectedPagePrefixes.some((prefix) =>
+    request.nextUrl.pathname === prefix ||
+    request.nextUrl.pathname.startsWith(`${prefix}/`)
+  );
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   // if user doesn't exist and the page is protected, redirect to login
-  if (
-    !user &&
-    protectedPages.some((page) => {
-      const matcher = match(page);
-      return matcher(request.nextUrl.pathname);
-    })
-  ) {
+  if (!user && isProtectedPath) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = '/login';
