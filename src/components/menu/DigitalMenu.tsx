@@ -57,7 +57,7 @@ function DigitalMenuContent({
   );
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
   const [isInfoDrawerOpen, setIsInfoDrawerOpen] = useState(false);
-  const [visibleItemsCount, setVisibleItemsCount] = useState(4); // Initial load: 4 items (2 rows on mobile)
+  const [visibleItemsCount, setVisibleItemsCount] = useState(6); // Initial load: 6 items (2 rows on mobile)
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Deep link: Open item modal if ?item=slug is in URL
@@ -102,7 +102,7 @@ function DigitalMenuContent({
 
   // Reset visible items count when filters change
   useEffect(() => {
-    setVisibleItemsCount(4);
+    setVisibleItemsCount(6);
     setIsLoadingMore(false); // Reset loading state when filters change
   }, [activeCategory, searchQuery]);
 
