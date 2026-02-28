@@ -2,6 +2,7 @@
 
 import { actionClient } from '@/lib/safe-action';
 import { createSupabaseClient } from '@/supabase-clients/server';
+import { getSafeNextPath } from '@/utils/auth/safe-next';
 import { toSiteURL } from '@/utils/helpers';
 import {
   signInSchema,
@@ -27,7 +28,7 @@ export const signInWithPasswordAction = actionClient
     });
 
     if (error) {
-      throw new Error(error.message);
+      throw new Error('Invalid login credentials');
     }
 
     // No need to return anything if the operation is successful
@@ -45,8 +46,9 @@ export const signInWithMagicLinkAction = actionClient
   .action(async ({ parsedInput: { email, next } }) => {
     const supabase = await createSupabaseClient();
     const redirectUrl = new URL(toSiteURL('/auth/callback'));
-    if (next) {
-      redirectUrl.searchParams.set('next', next);
+    const safeNextPath = getSafeNextPath(next);
+    if (safeNextPath) {
+      redirectUrl.searchParams.set('next', safeNextPath);
     }
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -75,8 +77,9 @@ export const signInWithProviderAction = actionClient
   .action(async ({ parsedInput: { provider, next } }) => {
     const supabase = await createSupabaseClient();
     const redirectToURL = new URL(toSiteURL('/auth/callback'));
-    if (next) {
-      redirectToURL.searchParams.set('next', next);
+    const safeNextPath = getSafeNextPath(next);
+    if (safeNextPath) {
+      redirectToURL.searchParams.set('next', safeNextPath);
     }
     const { error, data } = await supabase.auth.signInWithOAuth({
       provider,
