@@ -30,6 +30,7 @@ export const EmailAndPassword = ({
         });
       }}
       data-testid="password-form"
+      className="space-y-5"
     >
       <div className="space-y-5">
         <div className="space-y-2">
@@ -93,6 +94,21 @@ export const EmailAndPassword = ({
           )}
         </Button>
       </div>
+
+      <Button
+        disabled={isLoading}
+        type="submit"
+        className="h-11 w-full bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500 font-medium text-slate-950 hover:from-cyan-300 hover:via-sky-300 hover:to-blue-400"
+      >
+        {isLoading ? (
+          <>
+            <Spinner className="mr-2 h-4 w-4" />
+            <span>Signing in...</span>
+          </>
+        ) : (
+          <span>Login</span>
+        )}
+      </Button>
     </form>
   );
 };

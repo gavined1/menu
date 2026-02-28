@@ -25,7 +25,13 @@ export function DynamicLayoutProviders({
   children: React.ReactNode;
 }) {
   return (
-    <ThemeProvider enableSystem themes={['light', 'dark']} defaultTheme="light">
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem={false}
+      disableTransitionOnChange
+      themes={['light', 'dark']}
+    >
       {children}
       <Suspense>
         <ProgressBar
