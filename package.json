@@ -9,6 +9,9 @@
     "start": "next start",
     "gen:types": "npx supabase gen types typescript --project-id \"sopsqhxkructanpwdgeg\" --schema public > src/lib/database.types.ts",
     "build": "next build",
+    "build:cloudflare": "opennextjs-cloudflare build",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "test:e2e": "playwright test",
     "test": "vitest --root src --run",
     "test:watch": "vitest --root src",
@@ -174,6 +177,7 @@
     ]
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.17.1",
     "@eslint/js": "^9.39.3",
     "baseline-browser-mapping": "latest",
     "eslint": "^9.39.3",
