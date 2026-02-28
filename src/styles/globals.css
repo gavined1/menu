@@ -193,3 +193,17 @@
 .animate-fade-in {
   animation: fadeIn 0.8s ease-out forwards;
 }
+
+/* Landing page: diagonal light beams flow (cyan → purple) */
+@keyframes light-beams-bg {
+  0% {
+    background-position: 0% 0%, center;
+  }
+  100% {
+    background-position: 28% 28%, center;
+  }
+}
+
+.animate-light-beams-bg {
+  animation: light-beams-bg 20s linear infinite;
+}

@@ -19,11 +19,6 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
   const [showAdditionalSlides, setShowAdditionalSlides] = useState(false);
   const idleCallbackRef = useRef<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // When embedded in iframe (e.g. landing demo), skip priority to avoid "preloaded but not used" warning
-  const [isEmbedded, setIsEmbedded] = useState(true);
-  useEffect(() => {
-    setIsEmbedded(typeof window !== 'undefined' && window.self !== window.top);
-  }, []);
 
   // Get localized title/subtitle for featured items; when Khmer is null/empty, fall back to en
   const getLocalizedTitle = (item: MenuFeaturedItemWithTranslations): string => {
@@ -208,10 +203,10 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
                 fill
                 sizes="100vw"
                 className="object-cover"
-                priority={index === 0 && !isEmbedded}
+                priority={false}
                 quality={85}
-                loading={index === 0 && !isEmbedded ? 'eager' : 'lazy'}
-                fetchPriority={index === 0 && !isEmbedded ? 'high' : 'auto'}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'high' : 'auto'}
                 onLoad={index === 0 ? handleFirstImageLoaded : undefined}
               />
               {/* Gradient overlay */}

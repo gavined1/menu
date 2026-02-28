@@ -1,6 +1,12 @@
 import { NextConfig } from 'next';
 
 const frameAncestors = process.env.NEXT_PUBLIC_CSP_FRAME_ANCESTORS?.trim() || "'self'";
+const isDev = process.env.NODE_ENV !== 'production';
+
+// Next.js dev (HMR, webpack runtime) may use eval; allow only in development.
+const scriptSrc = isDev
+  ? "'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com"
+  : "'self' 'unsafe-inline' https://va.vercel-scripts.com";
 
 const cspDirectives = [
   "default-src 'self'",
@@ -8,7 +14,7 @@ const cspDirectives = [
   "form-action 'self'",
   `frame-ancestors ${frameAncestors}`,
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+  `script-src ${scriptSrc}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",

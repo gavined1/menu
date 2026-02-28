@@ -1,5 +1,6 @@
 'use client';
 
+import { LightBeams } from '@/components/landing/LightBeams';
 import {
   ArrowRight,
   Bus,
@@ -20,8 +21,8 @@ import Link from 'next/link';
 
 export default function LandingPage() {
   return (
-    <div className="antialiased relative min-h-screen overflow-hidden bg-white text-slate-900 selection:bg-orange-100 selection:text-orange-900">
-      {/* Background Layer (non-interactive) */}
+    <div className="antialiased relative z-0 min-h-screen overflow-hidden bg-white text-slate-900 selection:bg-orange-100 selection:text-orange-900">
+      {/* Background Layer (non-interactive) – z-0 on parent so -z-10 is scoped here, not behind layout */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <div className="absolute inset-0 bg-linear-to-b from-slate-50 via-white to-slate-50" />
         <div
@@ -49,8 +50,8 @@ export default function LandingPage() {
         <div className="absolute top-20 left-1/4 w-96 h-96 rounded-full blur-[128px] bg-orange-200/40" />
         <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full blur-[100px] bg-amber-200/30" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[150px] bg-slate-200/30" />
+        <LightBeams />
       </div>
-
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b bg-white/80 border-slate-200/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">

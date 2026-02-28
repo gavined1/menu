@@ -50,10 +50,6 @@ export const ExternalNavigation = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="hidden sm:inline">
-                Premium Nextbase Starter Kits
-              </span>
-              <span className="sm:hidden">Premium</span>
               <ExternalLink className="ml-2 h-4 w-4" />
             </Link>
           </Button>
