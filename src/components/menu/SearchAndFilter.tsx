@@ -69,8 +69,13 @@ export function SearchAndFilter({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isSearchExpanded, searchQuery]);
 
-  // Scroll active category into view
+  // Scroll active category into view when it changes (skip initial mount to avoid scroll jump)
+  const isInitialMount = useRef(true);
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     const activeButton = categoryRefs.current.get(activeCategory);
     if (activeButton) {
       activeButton.scrollIntoView({
