@@ -95,8 +95,9 @@ const config: NextConfig = {
         source: '/',
         headers: omniSecurityHeaders,
       },
+      // One or more path segments only (/:path+ does not match /)
       {
-        source: '/:path*',
+        source: '/:path+',
         headers: securityHeaders,
       },
     ];
