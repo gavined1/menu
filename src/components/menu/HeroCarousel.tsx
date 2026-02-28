@@ -19,6 +19,11 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
   const [showAdditionalSlides, setShowAdditionalSlides] = useState(false);
   const idleCallbackRef = useRef<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // When embedded in iframe (e.g. landing demo), skip priority to avoid "preloaded but not used" warning
+  const [isEmbedded, setIsEmbedded] = useState(true);
+  useEffect(() => {
+    setIsEmbedded(typeof window !== 'undefined' && window.self !== window.top);
+  }, []);
 
   // Get localized title/subtitle for featured items; when Khmer is null/empty, fall back to en
   const getLocalizedTitle = (item: MenuFeaturedItemWithTranslations): string => {
@@ -182,7 +187,7 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
       {/* Carousel Container */}
       <div
         ref={scrollRef}
-        className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide aspect-[4/3] sm:aspect-[16/9] w-full"
+        className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide aspect-4/3 sm:aspect-video w-full"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {visibleItems.map((item, index) => {
@@ -195,7 +200,7 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
               ref={(el) => {
                 slideRefs.current[index] = el;
               }}
-              className="flex-shrink-0 w-full h-full snap-center relative"
+              className="shrink-0 w-full h-full snap-center relative"
             >
               <Image
                 src={item.image_url}
@@ -203,14 +208,14 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
                 fill
                 sizes="100vw"
                 className="object-cover"
-                priority={index === 0}
+                priority={index === 0 && !isEmbedded}
                 quality={85}
-                loading={index === 0 ? 'eager' : 'lazy'}
-                fetchPriority={index === 0 ? 'high' : 'auto'}
+                loading={index === 0 && !isEmbedded ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 && !isEmbedded ? 'high' : 'auto'}
                 onLoad={index === 0 ? handleFirstImageLoaded : undefined}
               />
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-black/20" />
 
               {/* Content - Clean and minimal */}
               <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">

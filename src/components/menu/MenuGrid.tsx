@@ -10,7 +10,7 @@ function MenuItemCardSkeleton() {
   return (
     <div className="h-full flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
       {/* Image Container Skeleton */}
-      <div className="relative aspect-[4/3] bg-gray-200 flex-shrink-0" />
+      <div className="relative aspect-4/3 bg-gray-200 shrink-0" />
 
       {/* Content Area Skeleton */}
       <div className="flex flex-col flex-1 p-3">
@@ -139,7 +139,8 @@ export function MenuGrid({
             key={item.id}
             item={item}
             onItemClick={onItemClick}
-            priority={index < 4}
+            priority={false}
+            loading={index < 4 ? 'eager' : 'lazy'}
           />
         ))}
 

@@ -168,7 +168,7 @@ export function ItemDetailModal({
         >
           {/* Image Carousel - Responsive height */}
           <div
-            className="relative w-full flex-shrink-0"
+            className="relative w-full shrink-0"
             style={{ height: 'min(40dvh, 300px)' }}
           >
             {allImages.length > 0 ? (
@@ -184,7 +184,7 @@ export function ItemDetailModal({
                     ref={(el) => {
                       imageRefs.current[index] = el;
                     }}
-                    className="flex-shrink-0 w-full h-full snap-center relative"
+                    className="shrink-0 w-full h-full snap-center relative"
                   >
                     <Image
                       src={imageUrl}
@@ -199,7 +199,7 @@ export function ItemDetailModal({
                 ))}
               </div>
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+              <div className="w-full h-full bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
                 <span className="text-6xl">🍽️</span>
               </div>
             )}

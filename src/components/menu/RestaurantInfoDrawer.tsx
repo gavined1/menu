@@ -1,5 +1,6 @@
 'use client';
 
+import { getSafeExternalUrl } from '@/utils/security/safe-url';
 import {
     Clock,
     Facebook,
@@ -13,7 +14,6 @@ import Image from 'next/image';
 import { Drawer } from 'vaul';
 import { useMenuLocale, type TranslationKey } from './locale';
 import type { MenuClient } from './types';
-import { getSafeExternalUrl } from '@/utils/security/safe-url';
 
 interface RestaurantInfoDrawerProps {
     client: MenuClient;
@@ -62,9 +62,9 @@ export function RestaurantInfoDrawer({
         <Drawer.Root open={isOpen} onOpenChange={(open) => !open && onClose()} modal>
             <Drawer.Portal>
                 <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />
-                <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-[2rem] bg-white max-h-[90vh] outline-none overflow-hidden">
+                <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 flex flex-col rounded-t-2rem bg-white max-h-[90vh] outline-none overflow-hidden">
                     {/* Header with cover image */}
-                    <div className="relative h-44 w-full flex-shrink-0 bg-gray-900">
+                    <div className="relative h-44 w-full shrink-0 bg-gray-900">
                         {client.cover_image_url ? (
                             <Image
                                 src={client.cover_image_url}
@@ -76,9 +76,9 @@ export function RestaurantInfoDrawer({
                                 loading="lazy"
                             />
                         ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
+                            <div className="w-full h-full bg-linear-to-br from-gray-800 to-gray-900" />
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-black/20" />
 
                         {/* Drag Handle */}
                         <div className="absolute top-3 left-1/2 -translate-x-1/2 h-1 w-10 rounded-full bg-white/40" />
@@ -94,7 +94,7 @@ export function RestaurantInfoDrawer({
 
                         {/* Logo and Name */}
                         <div className="absolute bottom-4 left-5 right-5 flex items-end gap-4">
-                            <div className="w-16 h-16 rounded-2xl bg-white shadow-xl overflow-hidden border-2 border-white flex-shrink-0">
+                            <div className="w-16 h-16 rounded-2xl bg-white shadow-xl overflow-hidden border-2 border-white shrink-0">
                                 {client.logo_url ? (
                                     <Image
                                         src={client.logo_url}
@@ -183,7 +183,7 @@ export function RestaurantInfoDrawer({
                             <div className="space-y-3">
                                 {client.address && (
                                     <div className="flex items-start gap-3">
-                                        <MapPin className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                                        <MapPin className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
                                         <div>
                                             <p className="text-gray-900">{client.address}</p>
                                             {client.city && (
@@ -194,7 +194,7 @@ export function RestaurantInfoDrawer({
                                 )}
                                 {client.email && (
                                     <div className="flex items-center gap-3">
-                                        <Mail className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                                        <Mail className="w-5 h-5 text-gray-400 shrink-0" />
                                         <a
                                             href={`mailto:${client.email}`}
                                             className="text-gray-900 hover:underline"
@@ -214,7 +214,7 @@ export function RestaurantInfoDrawer({
                                         href={safeInstagramUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl hover:opacity-90 transition-opacity"
+                                        className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-2xl hover:opacity-90 transition-opacity"
                                     >
                                         <Instagram className="w-5 h-5" />
                                         <span className="font-medium">Instagram</span>

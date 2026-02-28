@@ -1,5 +1,6 @@
 import { ClientLayout } from '@/app/ClientLayout';
 import { ConditionalFooter } from '@/components/ConditionalFooter';
+import { DynamicLayoutProviders } from '@/app/(dynamic-pages)/DynamicLayoutProviders';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -17,9 +18,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-screen bg-stone-50">
-      <ClientLayout>{children}</ClientLayout>
-      <ConditionalFooter />
-    </div>
+    <DynamicLayoutProviders>
+      <div className="flex flex-col min-h-screen bg-stone-50">
+        <ClientLayout>{children}</ClientLayout>
+        <ConditionalFooter />
+      </div>
+    </DynamicLayoutProviders>
   );
 }

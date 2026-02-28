@@ -167,7 +167,7 @@ export function SearchAndFilter({
               {/* Search Icon Button */}
               <button
                 onClick={handleSearchIconClick}
-                className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 transition-all duration-200 active:scale-95"
+                className="shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 transition-all duration-200 active:scale-95"
                 aria-label={t('searchPlaceholder')}
                 aria-expanded={isSearchExpanded}
                 aria-controls={searchInputId}
@@ -203,7 +203,7 @@ export function SearchAndFilter({
                       tabIndex={isSearchExpanded ? -1 : 0}
                       role="tab"
                       aria-selected={isActive}
-                      className={`flex-shrink-0 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ${isActive
+                      className={`shrink-0 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 ${isActive
                         ? 'bg-gray-900 text-white'
                         : 'bg-white text-gray-700 hover:bg-gray-50 hover:text-gray-900 border border-gray-200'
                         }`}
