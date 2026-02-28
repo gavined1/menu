@@ -11,6 +11,8 @@ export {
   useMenuLocaleStore,
 } from './store';
 
+export type { LocalizableDescriptionItem, LocalizableNameItem } from './store';
+
 // Config
 export {
   currencies,

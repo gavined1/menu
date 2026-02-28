@@ -1,3 +1,4 @@
+import type { Json, Tables } from '@/lib/database.types';
 import { useEffect, useState } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -11,6 +12,17 @@ import {
   type SupportedLocale,
 } from './i18n.config';
 import { getTranslation, type TranslationKey } from './translations';
+
+/** Item with name fields (menu_items / menu_categories). Optional translations for JSON column if present. */
+export type LocalizableNameItem = Pick<Tables<'menu_items'>, 'name' | 'name_km'> & {
+  translations?: Json | null;
+};
+
+/** Item with description fields (menu_items). Optional translations for JSON column if present. */
+export type LocalizableDescriptionItem = Pick<
+  Tables<'menu_items'>,
+  'description' | 'description_km'
+> & { translations?: Json | null };
 
 // =============================================================================
 // TYPES
@@ -86,34 +98,45 @@ export function formatPrice(
     : `${formatted}${config.symbol}`;
 }
 
+function hasValue(s: string | null | undefined): s is string {
+  return s != null && String(s).trim() !== '';
+}
+
 export function getLocalizedText(
-  item: { name: string; name_km?: string | null; translations?: unknown },
+  item: LocalizableNameItem,
   locale: SupportedLocale
 ): string {
-  const translations = item.translations as Record<
-    string,
-    { name?: string }
-  > | null;
+  const translations = item.translations as Record<string, { name?: string }> | null;
+  if (locale === 'km') {
+    const kmName =
+      translations?.['km']?.name ?? item.name_km ?? null;
+    if (hasValue(kmName)) return kmName;
+    return translations?.['en']?.name ?? item.name;
+  }
   if (translations?.[locale]?.name) return translations[locale].name;
-  if (locale === 'km' && item.name_km) return item.name_km;
   return item.name;
 }
 
+/**
+ * Returns the item description for the current locale.
+ * Uses Khmer (translations.km / description_km) when locale is km and value is not null/empty; otherwise falls back to English.
+ */
 export function getLocalizedDescription(
-  item: {
-    description?: string | null;
-    description_km?: string | null;
-    translations?: unknown;
-  },
+  item: LocalizableDescriptionItem,
   locale: SupportedLocale
 ): string | null {
   const translations = item.translations as Record<
     string,
     { description?: string }
   > | null;
+  if (locale === 'km') {
+    const kmDesc =
+      translations?.['km']?.description ?? item.description_km ?? null;
+    if (hasValue(kmDesc)) return kmDesc;
+    return translations?.['en']?.description ?? item.description ?? null;
+  }
   if (translations?.[locale]?.description)
     return translations[locale].description;
-  if (locale === 'km' && item.description_km) return item.description_km;
   return item.description ?? null;
 }
 

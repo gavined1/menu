@@ -10,32 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.5"
-  }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+    PostgrestVersion: "14.4"
   }
   public: {
     Tables: {
@@ -52,7 +27,6 @@ export type Database = {
           name_km: string | null
           slug: string
           sort_order: number | null
-          translations: Json | null
           updated_at: string | null
         }
         Insert: {
@@ -67,7 +41,6 @@ export type Database = {
           name_km?: string | null
           slug: string
           sort_order?: number | null
-          translations?: Json | null
           updated_at?: string | null
         }
         Update: {
@@ -82,7 +55,6 @@ export type Database = {
           name_km?: string | null
           slug?: string
           sort_order?: number | null
-          translations?: Json | null
           updated_at?: string | null
         }
         Relationships: [
@@ -132,11 +104,9 @@ export type Database = {
           accent_color: string | null
           address: string | null
           city: string | null
-          client_type: string | null
           cover_image_url: string | null
           created_at: string | null
           currency: Database["public"]["Enums"]["menu_currency"] | null
-          currency_symbol: string | null
           default_locale: Database["public"]["Enums"]["menu_locale"] | null
           description: string | null
           email: string | null
@@ -152,19 +122,15 @@ export type Database = {
           settings: Json | null
           slug: string
           social_links: Json | null
-          supported_currencies: string[] | null
-          supported_locales: string[] | null
           updated_at: string | null
         }
         Insert: {
           accent_color?: string | null
           address?: string | null
           city?: string | null
-          client_type?: string | null
           cover_image_url?: string | null
           created_at?: string | null
           currency?: Database["public"]["Enums"]["menu_currency"] | null
-          currency_symbol?: string | null
           default_locale?: Database["public"]["Enums"]["menu_locale"] | null
           description?: string | null
           email?: string | null
@@ -180,19 +146,15 @@ export type Database = {
           settings?: Json | null
           slug: string
           social_links?: Json | null
-          supported_currencies?: string[] | null
-          supported_locales?: string[] | null
           updated_at?: string | null
         }
         Update: {
           accent_color?: string | null
           address?: string | null
           city?: string | null
-          client_type?: string | null
           cover_image_url?: string | null
           created_at?: string | null
           currency?: Database["public"]["Enums"]["menu_currency"] | null
-          currency_symbol?: string | null
           default_locale?: Database["public"]["Enums"]["menu_locale"] | null
           description?: string | null
           email?: string | null
@@ -208,8 +170,6 @@ export type Database = {
           settings?: Json | null
           slug?: string
           social_links?: Json | null
-          supported_currencies?: string[] | null
-          supported_locales?: string[] | null
           updated_at?: string | null
         }
         Relationships: []
@@ -228,7 +188,6 @@ export type Database = {
           subtitle_km: string | null
           title: string
           title_km: string | null
-          translations: Json | null
           updated_at: string | null
         }
         Insert: {
@@ -244,7 +203,6 @@ export type Database = {
           subtitle_km?: string | null
           title: string
           title_km?: string | null
-          translations?: Json | null
           updated_at?: string | null
         }
         Update: {
@@ -260,7 +218,6 @@ export type Database = {
           subtitle_km?: string | null
           title?: string
           title_km?: string | null
-          translations?: Json | null
           updated_at?: string | null
         }
         Relationships: [
@@ -286,7 +243,6 @@ export type Database = {
           category_id: string | null
           client_id: string
           created_at: string | null
-          custom_fields: Json | null
           description: string | null
           description_km: string | null
           id: string
@@ -294,7 +250,6 @@ export type Database = {
           images: string[] | null
           is_available: boolean | null
           is_featured: boolean | null
-          item_type: string | null
           metadata: Json | null
           name: string
           name_km: string | null
@@ -302,7 +257,6 @@ export type Database = {
           price: number
           slug: string
           sort_order: number | null
-          translations: Json | null
           updated_at: string | null
         }
         Insert: {
@@ -310,7 +264,6 @@ export type Database = {
           category_id?: string | null
           client_id: string
           created_at?: string | null
-          custom_fields?: Json | null
           description?: string | null
           description_km?: string | null
           id?: string
@@ -318,7 +271,6 @@ export type Database = {
           images?: string[] | null
           is_available?: boolean | null
           is_featured?: boolean | null
-          item_type?: string | null
           metadata?: Json | null
           name: string
           name_km?: string | null
@@ -326,7 +278,6 @@ export type Database = {
           price: number
           slug: string
           sort_order?: number | null
-          translations?: Json | null
           updated_at?: string | null
         }
         Update: {
@@ -334,7 +285,6 @@ export type Database = {
           category_id?: string | null
           client_id?: string
           created_at?: string | null
-          custom_fields?: Json | null
           description?: string | null
           description_km?: string | null
           id?: string
@@ -342,7 +292,6 @@ export type Database = {
           images?: string[] | null
           is_available?: boolean | null
           is_featured?: boolean | null
-          item_type?: string | null
           metadata?: Json | null
           name?: string
           name_km?: string | null
@@ -350,7 +299,6 @@ export type Database = {
           price?: number
           slug?: string
           sort_order?: number | null
-          translations?: Json | null
           updated_at?: string | null
         }
         Relationships: [
@@ -514,9 +462,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       menu_currency: ["USD", "KHR"],

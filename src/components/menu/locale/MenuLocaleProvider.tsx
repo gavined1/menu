@@ -7,6 +7,8 @@ import {
     getLocalizedDescription as getLocalizedDescriptionHelper,
     getLocalizedText as getLocalizedTextHelper,
     t as tHelper,
+    type LocalizableDescriptionItem,
+    type LocalizableNameItem,
     useMenuLocaleStore,
 } from './store';
 import type { TranslationKey } from './translations';
@@ -53,10 +55,10 @@ export function useMenuLocale() {
     const formatPrice = (priceUSD: number) =>
         formatPriceHelper(priceUSD, currency, locale, customExchangeRate);
 
-    const getLocalizedText = (item: { name: string; name_km?: string | null; translations?: unknown }) =>
+    const getLocalizedText = (item: LocalizableNameItem) =>
         getLocalizedTextHelper(item, locale);
 
-    const getLocalizedDescription = (item: { description?: string | null; description_km?: string | null; translations?: unknown }) =>
+    const getLocalizedDescription = (item: LocalizableDescriptionItem) =>
         getLocalizedDescriptionHelper(item, locale);
 
     return {

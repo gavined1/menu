@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "start": "next start",
-    "gen:types": "npx supabase gen types typescript --project-id \"ejoefoabvebmcimbssly\" --schema public > src/lib/database.types.ts",
+    "gen:types": "npx supabase gen types typescript --project-id \"sopsqhxkructanpwdgeg\" --schema public > src/lib/database.types.ts",
     "build": "next build",
     "build:cloudflare": "opennextjs-cloudflare build",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",

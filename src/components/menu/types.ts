@@ -1,6 +1,7 @@
-import type { Database } from '@/lib/database.types';
+import type { Database, Json } from '@/lib/database.types';
+import type { MenuFeaturedItem } from '@/rsc-data/menu/queries';
 
-// Re-export data types from rsc-data for consistency
+// Re-export data types from rsc-data (all are Supabase Tables<>)
 export type {
   FullMenuData,
   MenuCategory,
@@ -10,11 +11,16 @@ export type {
   MenuItemWithCategory,
 } from '@/rsc-data/menu/queries';
 
-// UI-specific types
+/** Featured item row + optional translations JSON if column exists in schema */
+export type MenuFeaturedItemWithTranslations = MenuFeaturedItem & {
+  translations?: Json | null;
+};
+
+// UI-specific types from Supabase Enums
 export type MenuItemBadgeType =
   Database['public']['Enums']['menu_item_badge_type'];
 
-// Locale types
+// Locale types from Supabase Enums
 export type MenuLocale = Database['public']['Enums']['menu_locale'];
 export type MenuCurrency = Database['public']['Enums']['menu_currency'];
 

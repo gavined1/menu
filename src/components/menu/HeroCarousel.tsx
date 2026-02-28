@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useMenuLocale } from './locale';
-import type { MenuFeaturedItem } from './types';
+import type { MenuFeaturedItemWithTranslations } from './types';
 
 interface HeroCarouselProps {
-  featuredItems: MenuFeaturedItem[];
+  featuredItems: MenuFeaturedItemWithTranslations[];
 }
 
 export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
@@ -20,32 +20,34 @@ export function HeroCarousel({ featuredItems }: HeroCarouselProps) {
   const idleCallbackRef = useRef<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Get localized title/subtitle for featured items
-  const getLocalizedTitle = (item: MenuFeaturedItem): string => {
+  // Get localized title/subtitle for featured items; when Khmer is null/empty, fall back to en
+  const getLocalizedTitle = (item: MenuFeaturedItemWithTranslations): string => {
     const translations = item.translations as Record<
       string,
       { title?: string }
     > | null;
-    if (translations?.[locale]?.title) {
-      return translations[locale].title;
+    if (locale === 'km') {
+      const kmTitle = translations?.['km']?.title ?? item.title_km ?? '';
+      if (kmTitle != null && String(kmTitle).trim() !== '') return kmTitle;
+      return translations?.['en']?.title ?? item.title;
     }
-    if (locale === 'km' && item.title_km) {
-      return item.title_km;
-    }
+    if (translations?.[locale]?.title) return translations[locale].title;
     return item.title;
   };
 
-  const getLocalizedSubtitle = (item: MenuFeaturedItem): string | null => {
+  const getLocalizedSubtitle = (item: MenuFeaturedItemWithTranslations): string | null => {
     const translations = item.translations as Record<
       string,
       { subtitle?: string }
     > | null;
-    if (translations?.[locale]?.subtitle) {
-      return translations[locale].subtitle;
+    if (locale === 'km') {
+      const kmSubtitle =
+        translations?.['km']?.subtitle ?? item.subtitle_km ?? '';
+      if (kmSubtitle != null && String(kmSubtitle).trim() !== '')
+        return kmSubtitle;
+      return translations?.['en']?.subtitle ?? item.subtitle ?? null;
     }
-    if (locale === 'km' && item.subtitle_km) {
-      return item.subtitle_km;
-    }
+    if (translations?.[locale]?.subtitle) return translations[locale].subtitle;
     return item.subtitle;
   };
 

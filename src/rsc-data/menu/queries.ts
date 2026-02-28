@@ -25,10 +25,7 @@ export type MenuFeaturedItem = Tables<'menu_featured_items'>;
 export type MenuClientMember = Tables<'menu_client_members'>;
 
 export interface MenuItemWithCategory extends MenuItem {
-  category: Pick<
-    MenuCategory,
-    'id' | 'name' | 'name_km' | 'slug' | 'translations'
-  > | null;
+  category: Pick<MenuCategory, 'id' | 'name' | 'name_km' | 'slug'> | null;
 }
 
 export interface FullMenuData {
@@ -121,7 +118,7 @@ export const getMenuItemBySlug = cache(
       .select(
         `
       *,
-      category:menu_categories(id, name, name_km, slug, translations)
+      category:menu_categories(id, name, name_km, slug)
     `
       )
       .eq('client_id', clientId)
@@ -158,7 +155,7 @@ export const getMenuItems = cache(
       .select(
         `
       *,
-      category:menu_categories(id, name, name_km, slug, translations)
+      category:menu_categories(id, name, name_km, slug)
     `
       )
       .eq('client_id', clientId)
@@ -269,7 +266,11 @@ export const getUserMenuClients = async (): Promise<MenuClientWithRole[]> => {
     return [];
   }
 
-  return (data ?? []).map((row: any) => ({
+  type RowWithClient = {
+    role: Tables<'menu_client_members'>['role'];
+    menu_clients: MenuClient | null;
+  };
+  return (data ?? []).map((row: RowWithClient) => ({
     ...(row.menu_clients as MenuClient),
     member_role: row.role as MenuClientRole,
   }));
