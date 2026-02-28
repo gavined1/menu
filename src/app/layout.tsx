@@ -10,6 +10,7 @@ const kantumruy = Kantumruy_Pro({
   weight: ['400', '500', '600', '700'],
   variable: '--font-khmer',
   display: 'swap',
+  preload: false,
 });
 
 const siteUrl =
