@@ -25,14 +25,15 @@ export default function LandingPage() {
       {/* Background Layer (non-interactive) – z-0 on parent so -z-10 is scoped here, not behind layout */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <div className="absolute inset-0 bg-linear-to-b from-slate-50 via-white to-slate-50" />
+        {/* Grid: lighter on mobile */}
         <div
-          className="absolute inset-0 opacity-90"
+          className="absolute inset-0 opacity-40 md:opacity-90"
           style={{
             backgroundImage: [
-              'linear-gradient(to right, rgba(15,23,42,0.09) 1px, transparent 1px)',
-              'linear-gradient(to bottom, rgba(15,23,42,0.09) 1px, transparent 1px)',
-              'linear-gradient(45deg, rgba(59,130,246,0.05) 25%, transparent 25%, transparent 75%, rgba(59,130,246,0.05) 75%, rgba(59,130,246,0.05))',
-              'linear-gradient(45deg, rgba(251,146,60,0.055) 25%, transparent 25%, transparent 75%, rgba(251,146,60,0.055) 75%, rgba(251,146,60,0.055))',
+              'linear-gradient(to right, rgba(15,23,42,0.07) 1px, transparent 1px)',
+              'linear-gradient(to bottom, rgba(15,23,42,0.07) 1px, transparent 1px)',
+              'linear-gradient(45deg, rgba(59,130,246,0.04) 25%, transparent 25%, transparent 75%, rgba(59,130,246,0.04) 75%, rgba(59,130,246,0.04))',
+              'linear-gradient(45deg, rgba(251,146,60,0.04) 25%, transparent 25%, transparent 75%, rgba(251,146,60,0.04) 75%, rgba(251,146,60,0.04))',
             ].join(','),
             backgroundSize: '48px 48px, 48px 48px, 96px 96px, 96px 96px',
             backgroundPosition: 'center center, center center, 0 0, 48px 48px',
@@ -40,16 +41,18 @@ export default function LandingPage() {
               'radial-gradient(ellipse at center, black 56%, rgba(0,0,0,0.92) 68%, transparent 96%)',
           }}
         />
+        {/* Radial color blobs: much lighter on mobile */}
         <div
-          className="absolute inset-0 opacity-80"
+          className="absolute inset-0 opacity-30 md:opacity-80"
           style={{
             background:
-              'radial-gradient(circle at 20% 12%, rgba(56,189,248,0.1), transparent 34%), radial-gradient(circle at 82% 30%, rgba(251,146,60,0.15), transparent 32%), radial-gradient(circle at 70% 78%, rgba(59,130,246,0.09), transparent 38%)',
+              'radial-gradient(circle at 20% 12%, rgba(56,189,248,0.08), transparent 34%), radial-gradient(circle at 82% 30%, rgba(251,146,60,0.1), transparent 32%), radial-gradient(circle at 70% 78%, rgba(59,130,246,0.06), transparent 38%)',
           }}
         />
-        <div className="absolute top-20 left-1/4 w-96 h-96 rounded-full blur-[128px] bg-orange-200/40" />
-        <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full blur-[100px] bg-amber-200/30" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[150px] bg-slate-200/30" />
+        {/* Blur orbs: hidden on mobile, full on md+ */}
+        <div className="absolute top-20 left-1/4 w-96 h-96 rounded-full blur-[128px] bg-orange-200/40 hidden md:block" />
+        <div className="absolute bottom-20 right-1/4 w-80 h-80 rounded-full blur-[100px] bg-amber-200/30 hidden md:block" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[150px] bg-slate-200/30 hidden md:block" />
         <LightBeams />
       </div>
       {/* Navigation */}

@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Subtle diagonal light beams (soft cyan → violet). Single smooth gradient wash.
+ * Subtle diagonal light beams (soft cyan → violet). Hidden on mobile for performance.
  */
 export function LightBeams() {
   return (
@@ -14,6 +14,7 @@ export function LightBeams() {
       `}</style>
       <div
         aria-hidden
+        className="hidden md:block"
         style={{
           position: 'absolute',
           inset: 0,
