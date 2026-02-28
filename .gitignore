@@ -9,6 +9,9 @@ supabase/.temp/project-ref
 /.next
 /out
 
+# OpenNext Cloudflare
+.open-next
+
 # next-sitemap
 public/robots.txt
 public/sitemap.xml
