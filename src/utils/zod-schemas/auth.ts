@@ -1,3 +1,4 @@
+import { getSafeNextPath } from '@/utils/auth/safe-next';
 import { z } from 'zod';
 
 // ============================================
@@ -12,6 +13,13 @@ export const passwordSchema = z
   .string()
   .min(8, 'Password must be at least 8 characters');
 
+export const nextPathSchema = z
+  .string()
+  .max(2048, 'Redirect path is too long')
+  .refine((value) => getSafeNextPath(value) === value, {
+    message: 'Invalid redirect path',
+  });
+
 // ============================================
 // Auth Schemas
 // ============================================
@@ -23,12 +31,12 @@ export const signInSchema = z.object({
 
 export const signInWithMagicLinkSchema = z.object({
   email: emailSchema,
-  next: z.string().optional(),
+  next: nextPathSchema.optional(),
 });
 
 export const signInWithProviderSchema = z.object({
   provider: z.enum(['google', 'github', 'twitter']),
-  next: z.string().optional(),
+  next: nextPathSchema.optional(),
 });
 
 // ============================================

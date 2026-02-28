@@ -3,6 +3,7 @@
 import { EmailAndPassword } from '@/components/Auth/EmailAndPassword';
 import { RedirectingPleaseWaitCard } from '@/components/Auth/RedirectingPleaseWaitCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { DEFAULT_AUTH_REDIRECT_PATH, getSafeNextPath } from '@/utils/auth/safe-next';
 import { signInWithPasswordAction } from '@/data/auth/auth';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
@@ -18,15 +19,10 @@ export function Login({ next }: LoginProps) {
   const [redirectInProgress, setRedirectInProgress] = useState(false);
   const toastRef = useRef<string | number | undefined>(undefined);
 
-  const redirectToDashboard = useCallback(() => {
-    if (next) {
-      router.push(`/auth/callback?next=${next}`);
-    } else {
-      router.push('/dashboard');
-    }
+  const redirectToDestination = useCallback(() => {
+    router.replace(getSafeNextPath(next, DEFAULT_AUTH_REDIRECT_PATH));
   }, [next, router]);
 
-  // Password Login
   const { execute: executePassword, status: passwordStatus } = useAction(
     signInWithPasswordAction,
     {
@@ -36,21 +32,16 @@ export function Login({ next }: LoginProps) {
       onSuccess: () => {
         toast.success('Logged in!', { id: toastRef.current });
         toastRef.current = undefined;
-        redirectToDashboard();
+        redirectToDestination();
         setRedirectInProgress(true);
       },
-      onError: (error) => {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : `Sign in failed ${String(error)}`;
-        toast.error(errorMessage, { id: toastRef.current });
+      onError: () => {
+        toast.error('Invalid email or password.', { id: toastRef.current });
         toastRef.current = undefined;
       },
     }
   );
 
-  // Show redirect state
   if (redirectInProgress) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4">
@@ -62,7 +53,6 @@ export function Login({ next }: LoginProps) {
     );
   }
 
-  // Main login UI
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4">
       <Card className="w-full max-w-md shadow-xl border-0 dark:border dark:border-slate-800">

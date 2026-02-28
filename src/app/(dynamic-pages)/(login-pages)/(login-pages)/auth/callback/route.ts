@@ -1,6 +1,9 @@
-import { createServerClient } from '@supabase/ssr';
+import { createSupabaseClient } from '@/supabase-clients/server';
+import {
+  DEFAULT_AUTH_REDIRECT_PATH,
+  getSafeNextPath,
+} from '@/utils/auth/safe-next';
 import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -8,42 +11,20 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code');
   const next = requestUrl.searchParams.get('next');
 
-  if (code) {
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          },
-        },
-      }
-    );
+  if (!code) {
+    const safeNextPath = getSafeNextPath(next, DEFAULT_AUTH_REDIRECT_PATH);
+    return NextResponse.redirect(new URL(safeNextPath, requestUrl.origin));
+  }
 
-    try {
-      // Exchange the code for a session
-      await supabase.auth.exchangeCodeForSession(code);
-    } catch (error) {
-      // Handle error
-      console.error('Failed to exchange code for session: ', error);
-      // Potentially return an error response here
-    }
+  const supabase = await createSupabaseClient();
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (error) {
+    return NextResponse.redirect(new URL('/auth/auth-code-error', requestUrl));
   }
 
   revalidatePath('/', 'layout');
 
-  const safeNextPath =
-    next && next.startsWith('/') && !next.startsWith('//')
-      ? next
-      : '/dashboard';
-  const redirectTo = new URL(safeNextPath, requestUrl.origin);
-
-  return NextResponse.redirect(redirectTo);
+  const safeNextPath = getSafeNextPath(next, DEFAULT_AUTH_REDIRECT_PATH);
+  return NextResponse.redirect(new URL(safeNextPath, requestUrl.origin));
 }
