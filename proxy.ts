@@ -1,6 +1,6 @@
 import { type NextRequest } from 'next/server';
 import { match } from 'path-to-regexp';
-import { updateSession } from './supabase-clients/middleware';
+import { updateSession } from './src/supabase-clients/middleware';
 
 const apiRoutes = ['/api{/*path}'];
 

@@ -90,6 +90,11 @@ const config: NextConfig = {
         source: '/omni',
         headers: omniSecurityHeaders,
       },
+      // Allow framing for homepage (e.g. external embeds)
+      {
+        source: '/',
+        headers: omniSecurityHeaders,
+      },
       {
         source: '/:path*',
         headers: securityHeaders,
