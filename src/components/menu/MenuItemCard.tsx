@@ -9,8 +9,11 @@ import {
   Star,
 } from 'lucide-react';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { useMenuLocale, type TranslationKey } from './locale';
 import type { MenuItemBadgeType, MenuItemWithCategory } from './types';
+
+const VARIANT_CYCLE_MS = 5000;
 
 interface MenuItemCardProps {
   item: MenuItemWithCategory;
@@ -80,7 +83,7 @@ export function MenuItemCard({
   priority = false,
   loading: loadingProp,
 }: MenuItemCardProps) {
-  const { t, formatPrice, getLocalizedText, getLocalizedDescription } = useMenuLocale();
+  const { t, formatPrice, getLocalizedText, getLocalizedDescription, locale } = useMenuLocale();
 
   const primaryBadge = item.badges?.[0];
   const badgeInfo = primaryBadge ? badgeConfig[primaryBadge] : null;
@@ -89,6 +92,28 @@ export function MenuItemCard({
   const itemName = getLocalizedText(item);
   const itemDescription = getLocalizedDescription(item);
   const categoryName = item.category ? getLocalizedText(item.category) : null;
+
+  const sortedVariants = (item.variants ?? []).slice().sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const hasVariants = sortedVariants.length > 0;
+  const variantLabel =
+    hasVariants &&
+    sortedVariants
+      .map((v) => (locale === 'km' && v.name_km ? v.name_km : v.name))
+      .join(', ');
+  const displayPrice = hasVariants
+    ? formatPrice(Math.min(...sortedVariants.map((v) => v.price)))
+    : item.price != null
+      ? formatPrice(item.price)
+      : null;
+
+  const [cyclingIndex, setCyclingIndex] = useState(0);
+  useEffect(() => {
+    if (!hasVariants || sortedVariants.length <= 1) return;
+    const id = setInterval(() => {
+      setCyclingIndex((i) => (i + 1) % sortedVariants.length);
+    }, VARIANT_CYCLE_MS);
+    return () => clearInterval(id);
+  }, [hasVariants, sortedVariants.length]);
 
   return (
     <div
@@ -125,9 +150,20 @@ export function MenuItemCard({
       <div className="flex flex-col flex-1 p-3">
         {/* Price + Badge Row */}
         <div className="flex items-center justify-between gap-2 mb-1">
-          <span className="text-sm font-bold text-gray-900">
-            {formatPrice(item.price)}
-          </span>
+          {displayPrice != null && (
+            <span className="text-sm font-bold text-gray-900 min-h-5 flex items-center">
+              {hasVariants ? (
+                <span key={cyclingIndex} className="animate-fade-in-price inline">
+                  {locale === 'km' && sortedVariants[cyclingIndex]?.name_km
+                    ? sortedVariants[cyclingIndex].name_km
+                    : sortedVariants[cyclingIndex]?.name}{' '}
+                  {formatPrice(sortedVariants[cyclingIndex]?.price ?? 0)}
+                </span>
+              ) : (
+                displayPrice
+              )}
+            </span>
+          )}
           {badgeInfo && BadgeIcon && (
             <div
               className={`px-1.5 py-0.5 rounded ${badgeInfo.bg} flex items-center gap-0.5`}
@@ -150,11 +186,16 @@ export function MenuItemCard({
           {itemDescription || '\u00A0'}
         </p>
 
-        {/* Category Row */}
-        <div className="flex items-center gap-1.5 mt-auto pt-1 overflow-hidden">
+        {/* Category Row + Variant badge */}
+        <div className="flex items-center justify-between gap-2 mt-auto pt-1 overflow-hidden min-h-0">
           {categoryName && (
             <span className="text-[10px] text-gray-400 truncate min-w-0">
               • {categoryName}
+            </span>
+          )}
+          {variantLabel && (
+            <span className="text-[9px] font-medium text-gray-500 shrink-0 px-1.5 py-0.5 rounded bg-gray-100/80">
+              {variantLabel}
             </span>
           )}
         </div>

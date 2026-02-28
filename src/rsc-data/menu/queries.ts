@@ -21,11 +21,13 @@ import { cache } from 'react';
 export type MenuClient = Tables<'menu_clients'>;
 export type MenuCategory = Tables<'menu_categories'>;
 export type MenuItem = Tables<'menu_items'>;
+export type MenuItemVariant = Tables<'menu_item_variants'>;
 export type MenuFeaturedItem = Tables<'menu_featured_items'>;
 export type MenuClientMember = Tables<'menu_client_members'>;
 
 export interface MenuItemWithCategory extends MenuItem {
   category: Pick<MenuCategory, 'id' | 'name' | 'name_km' | 'slug'> | null;
+  variants?: MenuItemVariant[] | null;
 }
 
 export interface FullMenuData {
@@ -77,11 +79,13 @@ const MENU_ITEM_BASE_SELECT = `
 `;
 
 const MENU_ITEM_SELECT = `${MENU_ITEM_BASE_SELECT},
-  category:menu_categories(id, name, name_km, slug)
+  category:menu_categories(id, name, name_km, slug),
+  variants:menu_item_variants(id, name, name_km, price, sort_order)
 `;
 
 const MENU_ITEM_SELECT_WITH_REQUIRED_CATEGORY = `${MENU_ITEM_BASE_SELECT},
-  category:menu_categories!inner(id, name, name_km, slug)
+  category:menu_categories!inner(id, name, name_km, slug),
+  variants:menu_item_variants(id, name, name_km, price, sort_order)
 `;
 
 const MENU_FEATURED_ITEM_SELECT =
@@ -212,13 +216,16 @@ export const getMenuItems = cache(
   }
 );
 
+/** Cache TTL in seconds: 0 in dev so carousel/seed changes show after refresh */
+const MENU_DATA_CACHE_SEC = process.env.NODE_ENV === 'development' ? 0 : 300;
+
 /**
  * Get featured/hero items for carousel
  */
 export const getMenuFeaturedItems = cache(async (clientId: string) => {
   'use cache';
   cacheTag('menu-featured-items', `menu-featured-${clientId}`);
-  cacheLife({ expire: 300 }); // Cache for 5 minutes
+  cacheLife({ expire: MENU_DATA_CACHE_SEC });
 
   const supabase = getPublicSupabase();
 
@@ -245,7 +252,7 @@ export const getFullMenuData = cache(
   async (clientSlug: string): Promise<FullMenuData | null> => {
     'use cache';
     cacheTag('menu-data', `menu-data-${clientSlug}`);
-    cacheLife({ expire: 300 }); // Cache for 5 minutes
+    cacheLife({ expire: MENU_DATA_CACHE_SEC });
 
     const client = await getMenuClientBySlug(clientSlug);
 

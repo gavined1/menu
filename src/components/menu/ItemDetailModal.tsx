@@ -86,8 +86,9 @@ export function ItemDetailModal({
   isOpen,
   onClose,
 }: ItemDetailModalProps) {
-  const { t, formatPrice, getLocalizedText, getLocalizedDescription } = useMenuLocale();
+  const { t, formatPrice, getLocalizedText, getLocalizedDescription, locale } = useMenuLocale();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -105,10 +106,23 @@ export function ItemDetailModal({
 
   const hasMultipleImages = allImages.length > 1;
 
-  // Reset index when item changes
+  // Reset indices when item changes
   useEffect(() => {
     setActiveImageIndex(0);
+    setSelectedVariantIndex(0);
   }, [item?.id]);
+
+  const sortedVariants = (item?.variants ?? []).slice().sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const hasVariants = sortedVariants.length > 0;
+  const displayPrice =
+    hasVariants && sortedVariants[selectedVariantIndex]
+      ? formatPrice(sortedVariants[selectedVariantIndex].price)
+      : item?.price != null
+        ? formatPrice(item.price)
+        : null;
+
+  const getVariantLabel = (v: { name: string; name_km: string | null }) =>
+    locale === 'km' && v.name_km ? v.name_km : v.name;
 
   // Handle scroll to update active index - using onScroll prop instead
   const handleCarouselScroll = useCallback(() => {
@@ -261,11 +275,13 @@ export function ItemDetailModal({
             )}
 
             {/* Price badge */}
-            <div className="absolute bottom-4 right-4 px-4 py-2 bg-white rounded-full shadow-lg">
-              <span className="text-xl font-bold text-gray-900">
-                {formatPrice(item.price)}
-              </span>
-            </div>
+            {displayPrice != null && (
+              <div className="absolute bottom-4 right-4 px-4 py-2 bg-white rounded-full shadow-lg">
+                <span className="text-xl font-bold text-gray-900">
+                  {displayPrice}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Scrollable Content */}
@@ -283,6 +299,25 @@ export function ItemDetailModal({
               <Drawer.Title className="text-xl font-bold text-gray-900 leading-tight">
                 {itemName}
               </Drawer.Title>
+
+              {/* Variant selector (e.g. Hot / Ice / Frappe) */}
+              {hasVariants && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {sortedVariants.map((v, idx) => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onClick={() => setSelectedVariantIndex(idx)}
+                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${selectedVariantIndex === idx
+                          ? 'bg-gray-900 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                    >
+                      {getVariantLabel(v)} — {formatPrice(v.price)}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Info Pills Row - Time, Badges */}
               <div className="flex flex-wrap items-center gap-2 mt-3">

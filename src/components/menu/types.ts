@@ -8,6 +8,7 @@ export type {
   MenuClient,
   MenuFeaturedItem,
   MenuItem,
+  MenuItemVariant,
   MenuItemWithCategory,
 } from '@/rsc-data/menu/queries';
 

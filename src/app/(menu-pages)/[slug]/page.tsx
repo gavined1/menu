@@ -6,7 +6,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 // Prefer running close to Supabase region (ap-northeast-2)
-export const preferredRegion = ['icn1'];
+export const preferredRegion = ['sin1'];
 
 interface MenuPageProps {
     params: Promise<{ slug: string }>;
@@ -55,13 +55,13 @@ export async function generateMetadata({
                     description,
                     images: ogImageUrl
                         ? [
-                              {
-                                  url: ogImageUrl,
-                                  width: 1200,
-                                  height: 630,
-                                  alt: item.name,
-                              },
-                          ]
+                            {
+                                url: ogImageUrl,
+                                width: 1200,
+                                height: 630,
+                                alt: item.name,
+                            },
+                        ]
                         : [],
                 },
                 twitter: {
@@ -91,13 +91,13 @@ export async function generateMetadata({
                 client.description || `View the digital menu for ${client.name}`,
             images: ogImageUrl
                 ? [
-                      {
-                          url: ogImageUrl,
-                          width: 1200,
-                          height: 630,
-                          alt: `${client.name} - Digital Menu`,
-                      },
-                  ]
+                    {
+                        url: ogImageUrl,
+                        width: 1200,
+                        height: 630,
+                        alt: `${client.name} - Digital Menu`,
+                    },
+                ]
                 : [],
         },
         twitter: {

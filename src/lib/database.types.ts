@@ -254,7 +254,7 @@ export type Database = {
           name: string
           name_km: string | null
           prep_time_minutes: number | null
-          price: number
+          price: number | null
           slug: string
           sort_order: number | null
           updated_at: string | null
@@ -275,7 +275,7 @@ export type Database = {
           name: string
           name_km?: string | null
           prep_time_minutes?: number | null
-          price: number
+          price?: number | null
           slug: string
           sort_order?: number | null
           updated_at?: string | null
@@ -314,6 +314,47 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "menu_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      menu_item_variants: {
+        Row: {
+          id: string
+          item_id: string
+          name: string
+          name_km: string | null
+          price: number
+          sort_order: number
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          item_id: string
+          name: string
+          name_km?: string | null
+          price: number
+          sort_order?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          item_id?: string
+          name?: string
+          name_km?: string | null
+          price?: number
+          sort_order?: number
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "menu_item_variants_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "menu_items"
             referencedColumns: ["id"]
           },
         ]

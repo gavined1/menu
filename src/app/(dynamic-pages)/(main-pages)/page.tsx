@@ -415,6 +415,8 @@ export default function LandingPage() {
                     {/* Click overlay to go to demo */}
                     <Link
                       href="/omni"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="absolute inset-0 z-10 flex items-center justify-center bg-transparent hover:bg-black/10 transition-colors group"
                     >
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white px-5 py-2.5 rounded-full shadow-xl">
