@@ -86,23 +86,33 @@ export function formatPrice(
     : `${formatted}${config.symbol}`;
 }
 
-/** Localized name (2 languages: en, km) */
 export function getLocalizedText(
-  item: { name: string; name_km?: string | null },
+  item: { name: string; name_km?: string | null; translations?: unknown },
   locale: SupportedLocale
 ): string {
+  const translations = item.translations as Record<
+    string,
+    { name?: string }
+  > | null;
+  if (translations?.[locale]?.name) return translations[locale].name;
   if (locale === 'km' && item.name_km) return item.name_km;
   return item.name;
 }
 
-/** Localized description (2 languages: en, km) */
 export function getLocalizedDescription(
   item: {
     description?: string | null;
     description_km?: string | null;
+    translations?: unknown;
   },
   locale: SupportedLocale
 ): string | null {
+  const translations = item.translations as Record<
+    string,
+    { description?: string }
+  > | null;
+  if (translations?.[locale]?.description)
+    return translations[locale].description;
   if (locale === 'km' && item.description_km) return item.description_km;
   return item.description ?? null;
 }

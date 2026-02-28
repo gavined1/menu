@@ -27,7 +27,7 @@ export type MenuClientMember = Tables<'menu_client_members'>;
 export interface MenuItemWithCategory extends MenuItem {
   category: Pick<
     MenuCategory,
-    'id' | 'name' | 'name_km' | 'slug'
+    'id' | 'name' | 'name_km' | 'slug' | 'translations'
   > | null;
 }
 
@@ -121,7 +121,7 @@ export const getMenuItemBySlug = cache(
       .select(
         `
       *,
-      category:menu_categories(id, name, name_km, slug)
+      category:menu_categories(id, name, name_km, slug, translations)
     `
       )
       .eq('client_id', clientId)
@@ -158,7 +158,7 @@ export const getMenuItems = cache(
       .select(
         `
       *,
-      category:menu_categories(id, name, name_km, slug)
+      category:menu_categories(id, name, name_km, slug, translations)
     `
       )
       .eq('client_id', clientId)

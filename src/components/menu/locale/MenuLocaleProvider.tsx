@@ -53,10 +53,10 @@ export function useMenuLocale() {
     const formatPrice = (priceUSD: number) =>
         formatPriceHelper(priceUSD, currency, locale, customExchangeRate);
 
-    const getLocalizedText = (item: { name: string; name_km?: string | null }) =>
+    const getLocalizedText = (item: { name: string; name_km?: string | null; translations?: unknown }) =>
         getLocalizedTextHelper(item, locale);
 
-    const getLocalizedDescription = (item: { description?: string | null; description_km?: string | null }) =>
+    const getLocalizedDescription = (item: { description?: string | null; description_km?: string | null; translations?: unknown }) =>
         getLocalizedDescriptionHelper(item, locale);
 
     return {
