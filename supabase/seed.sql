@@ -1,6 +1,6 @@
 -- Seed data from current database snapshot
 -- Run after migrations. Order: menu_clients → menu_categories → menu_items → menu_featured_items → menu_client_members
--- Portable: owner_id is NULL so no auth.users row is required. After signup, link a user via menu_client_members and set menu_clients.owner_id.
+-- Note: menu_clients.owner_id and menu_client_members reference auth.users; ensure that user exists or set owner_id to NULL for a portable seed.
 
 -- ============================================
 -- menu_clients
@@ -30,7 +30,7 @@ INSERT INTO public.menu_clients (
   'en',
   'USD',
   4000,
-  NULL
+  '944cd4ef-032c-4dc8-83e7-e4249db41356'
 )
 ON CONFLICT (id) DO UPDATE SET
   name = EXCLUDED.name,
@@ -223,20 +223,17 @@ ON CONFLICT (id) DO UPDATE SET
   updated_at = now();
 
 -- ============================================
--- menu_client_members (optional – run after you have a user in auth.users)
+-- menu_client_members
 -- ============================================
--- Uncomment and replace <YOUR_USER_UUID> with a real auth.users.id (e.g. after signup), then run this block.
--- Also set owner_id on the client: UPDATE public.menu_clients SET owner_id = '<YOUR_USER_UUID>' WHERE id = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
-/*
+-- Requires auth.users.id = '944cd4ef-032c-4dc8-83e7-e4249db41356' to exist. Omit this block for a portable seed.
 INSERT INTO public.menu_client_members (id, client_id, user_id, role)
 VALUES (
   '3ce20e60-8cb9-4f13-8d9b-72310b553866',
   'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-  '<YOUR_USER_UUID>'::uuid,
+  '944cd4ef-032c-4dc8-83e7-e4249db41356',
   'owner'
 )
 ON CONFLICT (id) DO UPDATE SET
   client_id = EXCLUDED.client_id,
   user_id = EXCLUDED.user_id,
   role = EXCLUDED.role;
-*/
