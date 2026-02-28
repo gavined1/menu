@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DEFAULT_AUTH_REDIRECT_PATH, getSafeNextPath } from '@/utils/auth/safe-next';
 import { signInWithPasswordAction } from '@/data/auth/auth';
-import { CircleCheckBig, ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Sparkles, Star } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import { useCallback, useRef, useState } from 'react';
@@ -47,7 +47,7 @@ export function Login({ next }: LoginProps) {
   if (redirectInProgress) {
     return (
       <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 p-4">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.22),_transparent_42%),radial-gradient(circle_at_bottom,_rgba(14,165,233,0.16),_transparent_42%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.25),_transparent_45%),radial-gradient(circle_at_bottom,_rgba(56,189,248,0.2),_transparent_45%)]" />
         <RedirectingPleaseWaitCard
           message="Please wait while we redirect you to your dashboard."
           heading="Redirecting to Dashboard"
@@ -58,58 +58,61 @@ export function Login({ next }: LoginProps) {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 p-4 sm:p-8">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.18),_transparent_42%),radial-gradient(circle_at_bottom,_rgba(14,165,233,0.12),_transparent_42%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.25),_transparent_45%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.2),_transparent_40%)]" />
+      <div className="absolute -left-24 top-10 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
+      <div className="absolute -bottom-24 right-8 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
 
-      <Card className="relative w-full max-w-5xl overflow-hidden border border-white/10 bg-slate-900/80 shadow-[0_30px_80px_-35px_rgba(8,47,73,0.8)] backdrop-blur-xl">
-        <div className="grid md:grid-cols-[1.1fr_1fr]">
-          <section className="border-b border-white/10 p-6 sm:p-10 md:border-b-0 md:border-r">
-            <Badge variant="secondary" className="border-cyan-300/25 bg-cyan-300/10 text-cyan-100">
-              Owner Platform Access
+      <Card className="relative grid w-full max-w-4xl overflow-hidden border border-white/10 bg-slate-900/70 shadow-[0_24px_60px_-24px_rgba(6,182,212,0.55)] backdrop-blur-xl md:grid-cols-2">
+        <div className="hidden flex-col justify-between border-r border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-8 md:flex">
+          <div className="space-y-4">
+            <Badge variant="secondary" className="w-fit border border-cyan-300/20 bg-cyan-300/10 text-cyan-100">
+              Platform Access
             </Badge>
-            <div className="mt-5 space-y-4">
-              <h1 className="text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Professional menu operations, secured for your internal team.
-              </h1>
-              <p className="max-w-lg text-sm leading-relaxed text-slate-300 sm:text-base">
-                This portal is for approved client accounts provisioned by the platform owner. Sign in to manage content, publishing, and performance across locations.
-              </p>
+            <h1 className="text-3xl font-semibold tracking-tight text-white">
+              Crafted for teams that expect a premium control panel.
+            </h1>
+            <p className="text-sm leading-relaxed text-slate-300">
+              Manage menus, publishing, and customer-facing experiences from one secure workspace.
+            </p>
+          </div>
+
+          <div className="space-y-4 text-sm text-slate-200">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="h-4 w-4 text-cyan-300" />
+              <span>Enterprise-grade session and route protection.</span>
             </div>
-
-            <div className="mt-8 space-y-3 text-sm text-slate-200">
-              <div className="flex items-center gap-2.5">
-                <ShieldCheck className="h-4 w-4 text-cyan-300" />
-                <span>Route and session protections are enforced by default.</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <CircleCheckBig className="h-4 w-4 text-cyan-300" />
-                <span>Access is invite-only and managed by your platform owner.</span>
-              </div>
+            <div className="flex items-center gap-3">
+              <Sparkles className="h-4 w-4 text-cyan-300" />
+              <span>Built for high-performance operations and reliability.</span>
             </div>
-          </section>
+            <div className="flex items-center gap-3">
+              <Star className="h-4 w-4 text-cyan-300" />
+              <span>Trusted by brands that prioritize polished UX.</span>
+            </div>
+          </div>
+        </div>
 
-          <section className="p-6 sm:p-10">
-            <CardHeader className="space-y-2 px-0 pb-7 pt-0 text-left">
-              <CardTitle className="text-2xl font-semibold tracking-tight text-white">Welcome back</CardTitle>
-              <CardDescription className="text-base text-slate-300">
-                Sign in to continue to your dashboard.
-              </CardDescription>
-            </CardHeader>
+        <div className="p-6 sm:p-8 md:p-10">
+          <CardHeader className="space-y-2 px-0 pb-8 pt-0 text-left">
+            <CardTitle className="text-2xl font-semibold tracking-tight text-white">
+              Welcome back
+            </CardTitle>
+            <CardDescription className="text-base text-slate-300">
+              Log in to continue to your dashboard.
+            </CardDescription>
+          </CardHeader>
 
-            <CardContent className="space-y-4 px-0 pb-0">
-              <EmailAndPassword
-                isLoading={passwordStatus === 'executing'}
-                onSubmit={(data) => {
-                  executePassword({
-                    email: data.email,
-                    password: data.password,
-                  });
-                }}
-              />
-              <p className="text-xs text-slate-400">
-                Need access? Contact your platform owner to create or update your account credentials.
-              </p>
-            </CardContent>
-          </section>
+          <CardContent className="px-0 pb-0">
+            <EmailAndPassword
+              isLoading={passwordStatus === 'executing'}
+              onSubmit={(data) => {
+                executePassword({
+                  email: data.email,
+                  password: data.password,
+                });
+              }}
+            />
+          </CardContent>
         </div>
       </Card>
     </div>
