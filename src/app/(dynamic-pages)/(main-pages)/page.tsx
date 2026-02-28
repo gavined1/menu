@@ -88,7 +88,7 @@ const phoneEntrance = {
     scale: 1,
     transformOrigin: 'center bottom',
     transition: {
-      duration: 3,
+      duration: 2,
       ease: easeOutExpo,
       delay: 0.25,
     },
