@@ -1,6 +1,7 @@
 import { NextConfig } from 'next';
 
-const cspDirectives = ["frame-ancestors 'none'"];
+// Allow framing so the site (including homepage) can be embedded; use frame-ancestors * site-wide
+const cspDirectives = ['frame-ancestors *'];
 
 if (process.env.NODE_ENV === 'production') {
   cspDirectives.push('upgrade-insecure-requests');
@@ -10,10 +11,6 @@ const securityHeaders = [
   {
     key: 'X-Content-Type-Options',
     value: 'nosniff',
-  },
-  {
-    key: 'X-Frame-Options',
-    value: 'DENY',
   },
   {
     key: 'Referrer-Policy',
@@ -26,32 +23,6 @@ const securityHeaders = [
   {
     key: 'Content-Security-Policy',
     value: cspDirectives.join('; '),
-  },
-];
-
-// For the public menu embed at /omni, allow framing
-const omniCspDirectives = ["frame-ancestors *"];
-
-if (process.env.NODE_ENV === 'production') {
-  omniCspDirectives.push('upgrade-insecure-requests');
-}
-
-const omniSecurityHeaders = [
-  {
-    key: 'X-Content-Type-Options',
-    value: 'nosniff',
-  },
-  {
-    key: 'Referrer-Policy',
-    value: 'strict-origin-when-cross-origin',
-  },
-  {
-    key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=()',
-  },
-  {
-    key: 'Content-Security-Policy',
-    value: omniCspDirectives.join('; '),
   },
 ];
 
@@ -87,17 +58,7 @@ const config: NextConfig = {
   async headers() {
     return [
       {
-        source: '/omni',
-        headers: omniSecurityHeaders,
-      },
-      // Allow framing for homepage (e.g. external embeds)
-      {
-        source: '/',
-        headers: omniSecurityHeaders,
-      },
-      // One or more path segments only (/:path+ does not match /)
-      {
-        source: '/:path+',
+        source: '/:path*',
         headers: securityHeaders,
       },
     ];
