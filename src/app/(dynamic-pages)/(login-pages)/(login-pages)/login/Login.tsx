@@ -2,9 +2,11 @@
 
 import { EmailAndPassword } from '@/components/Auth/EmailAndPassword';
 import { RedirectingPleaseWaitCard } from '@/components/Auth/RedirectingPleaseWaitCard';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { DEFAULT_AUTH_REDIRECT_PATH, getSafeNextPath } from '@/utils/auth/safe-next';
 import { signInWithPasswordAction } from '@/data/auth/auth';
+import { ShieldCheck, Sparkles, Star } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import { useCallback, useRef, useState } from 'react';
@@ -44,7 +46,8 @@ export function Login({ next }: LoginProps) {
 
   if (redirectInProgress) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4">
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 p-4">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.25),_transparent_45%),radial-gradient(circle_at_bottom,_rgba(56,189,248,0.2),_transparent_45%)]" />
         <RedirectingPleaseWaitCard
           message="Please wait while we redirect you to your dashboard."
           heading="Redirecting to Dashboard"
@@ -54,43 +57,63 @@ export function Login({ next }: LoginProps) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-4">
-      <Card className="w-full max-w-md shadow-xl border-0 dark:border dark:border-slate-800">
-        <CardHeader className="space-y-1 text-center pb-6">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-            <svg
-              className="h-6 w-6 text-primary"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
-          </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">
-            Welcome back
-          </CardTitle>
-          <CardDescription className="text-base">
-            Sign in to your account to continue
-          </CardDescription>
-        </CardHeader>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 p-4 sm:p-8">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.25),_transparent_45%),radial-gradient(circle_at_bottom_right,_rgba(14,165,233,0.2),_transparent_40%)]" />
+      <div className="absolute -left-24 top-10 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
+      <div className="absolute -bottom-24 right-8 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
 
-        <CardContent>
-          <EmailAndPassword
-            isLoading={passwordStatus === 'executing'}
-            onSubmit={(data) => {
-              executePassword({
-                email: data.email,
-                password: data.password,
-              });
-            }}
-          />
-        </CardContent>
+      <Card className="relative grid w-full max-w-4xl overflow-hidden border border-white/10 bg-slate-900/70 shadow-[0_24px_60px_-24px_rgba(6,182,212,0.55)] backdrop-blur-xl md:grid-cols-2">
+        <div className="hidden flex-col justify-between border-r border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-8 md:flex">
+          <div className="space-y-4">
+            <Badge variant="secondary" className="w-fit border border-cyan-300/20 bg-cyan-300/10 text-cyan-100">
+              Platform Access
+            </Badge>
+            <h1 className="text-3xl font-semibold tracking-tight text-white">
+              Crafted for teams that expect a premium control panel.
+            </h1>
+            <p className="text-sm leading-relaxed text-slate-300">
+              Manage menus, publishing, and customer-facing experiences from one secure workspace.
+            </p>
+          </div>
+
+          <div className="space-y-4 text-sm text-slate-200">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="h-4 w-4 text-cyan-300" />
+              <span>Enterprise-grade session and route protection.</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <Sparkles className="h-4 w-4 text-cyan-300" />
+              <span>Built for high-performance operations and reliability.</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <Star className="h-4 w-4 text-cyan-300" />
+              <span>Trusted by brands that prioritize polished UX.</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 sm:p-8 md:p-10">
+          <CardHeader className="space-y-2 px-0 pb-8 pt-0 text-left">
+            <CardTitle className="text-2xl font-semibold tracking-tight text-white">
+              Welcome back
+            </CardTitle>
+            <CardDescription className="text-base text-slate-300">
+              Log in to continue to your dashboard.
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="px-0 pb-0">
+            <EmailAndPassword
+              isLoading={passwordStatus === 'executing'}
+              onSubmit={(data) => {
+                executePassword({
+                  email: data.email,
+                  password: data.password,
+                });
+              }}
+            />
+          </CardContent>
+        </div>
       </Card>
     </div>
   );
