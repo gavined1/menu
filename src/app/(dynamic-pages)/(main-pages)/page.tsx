@@ -52,6 +52,8 @@ const sectionFade = {
     transition: { duration: 0.6, ease: easeOutExpo },
   },
 };
+const earlySectionViewport = { once: true, margin: '0px 0px 0px 0px', amount: 0.08 };
+const earlyCardViewport = { once: true, margin: '0px 0px 0px 0px', amount: 0.1 };
 /** Parent-driven stagger: use with a container that has staggerChildren + delayChildren */
 const cardStaggerContainer = {
   visible: {
@@ -301,7 +303,7 @@ export default function LandingPage() {
         className="pb-28 px-6 relative"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: '-80px', amount: 0.2 }}
+        viewport={earlySectionViewport}
         variants={sectionFade}
       >
         <div className="max-w-6xl mx-auto">
@@ -378,7 +380,7 @@ export default function LandingPage() {
                 style={{ perspectiveOrigin: 'center 60%' }}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, margin: '-40px', amount: 0.2 }}
+                viewport={earlySectionViewport}
                 variants={phoneEntrance}
               >
                 {/* Glow effect behind phone */}
@@ -440,7 +442,7 @@ export default function LandingPage() {
         className="py-28 relative"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: '-80px', amount: 'some' }}
+        viewport={earlySectionViewport}
         variants={sectionFade}
       >
         {/* Section beam decoration */}
@@ -467,7 +469,7 @@ export default function LandingPage() {
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-80px', amount: 0.15 }}
+            viewport={earlyCardViewport}
             variants={cardStaggerContainer}
           >
             {/* Feature 1: Mobile First */}
@@ -603,7 +605,7 @@ export default function LandingPage() {
         className="py-24 relative"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: '-60px' }}
+        viewport={earlySectionViewport}
         variants={sectionFade}
       >
         {/* Section beam decorations */}
@@ -632,7 +634,7 @@ export default function LandingPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-4"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: '-80px', amount: 0.15 }}
+            viewport={earlyCardViewport}
             variants={cardStaggerContainer}
           >
             {/* Use Case 1 */}
@@ -723,7 +725,7 @@ export default function LandingPage() {
         className="pt-28 pb-32 px-6 relative"
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: '-80px' }}
+        viewport={earlySectionViewport}
         variants={sectionFade}
       >
         {/* CTA glow effect */}
