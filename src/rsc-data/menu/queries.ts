@@ -48,6 +48,45 @@ export interface MenuClientWithRole extends MenuClient {
 // Create a singleton instance for public data
 const getPublicSupabase = () => createPublicSupabaseClient();
 
+const MENU_CLIENT_SELECT =
+  'id, name, slug, description, logo_url, cover_image_url, primary_color, accent_color, settings, is_active, created_at, updated_at, phone, address, city, currency, exchange_rate, default_locale, email, opening_hours, owner_id, social_links';
+
+const MENU_CATEGORY_SELECT =
+  'id, client_id, name, name_km, slug, description, description_km, image_url, sort_order, is_active, created_at, updated_at';
+
+const MENU_ITEM_BASE_SELECT = `
+  id,
+  client_id,
+  category_id,
+  name,
+  name_km,
+  slug,
+  description,
+  description_km,
+  price,
+  image_url,
+  images,
+  badges,
+  prep_time_minutes,
+  is_featured,
+  is_available,
+  sort_order,
+  metadata,
+  created_at,
+  updated_at
+`;
+
+const MENU_ITEM_SELECT = `${MENU_ITEM_BASE_SELECT},
+  category:menu_categories(id, name, name_km, slug)
+`;
+
+const MENU_ITEM_SELECT_WITH_REQUIRED_CATEGORY = `${MENU_ITEM_BASE_SELECT},
+  category:menu_categories!inner(id, name, name_km, slug)
+`;
+
+const MENU_FEATURED_ITEM_SELECT =
+  'id, client_id, item_id, title, title_km, subtitle, subtitle_km, badge_text, image_url, sort_order, is_active, created_at, updated_at';
+
 // ============================================
 // Query Functions
 // ============================================
@@ -64,10 +103,10 @@ export const getMenuClientBySlug = cache(async (slug: string) => {
 
   const { data, error } = await supabase
     .from('menu_clients')
-    .select('*')
+    .select(MENU_CLIENT_SELECT)
     .eq('slug', slug)
     .eq('is_active', true)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('Error fetching menu client:', error);
@@ -89,7 +128,7 @@ export const getMenuCategories = cache(async (clientId: string) => {
 
   const { data, error } = await supabase
     .from('menu_categories')
-    .select('*')
+    .select(MENU_CATEGORY_SELECT)
     .eq('client_id', clientId)
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
@@ -115,16 +154,11 @@ export const getMenuItemBySlug = cache(
 
     const { data, error } = await supabase
       .from('menu_items')
-      .select(
-        `
-      *,
-      category:menu_categories(id, name, name_km, slug)
-    `
-      )
+      .select(MENU_ITEM_SELECT)
       .eq('client_id', clientId)
       .eq('slug', itemSlug)
       .eq('is_available', true)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching menu item:', error);
@@ -150,31 +184,21 @@ export const getMenuItems = cache(
 
     const supabase = getPublicSupabase();
 
+    const isFilteredCategory = Boolean(categorySlug && categorySlug !== 'all');
+
     let query = supabase
       .from('menu_items')
       .select(
-        `
-      *,
-      category:menu_categories(id, name, name_km, slug)
-    `
+        isFilteredCategory
+          ? MENU_ITEM_SELECT_WITH_REQUIRED_CATEGORY
+          : MENU_ITEM_SELECT
       )
       .eq('client_id', clientId)
       .eq('is_available', true)
       .order('sort_order', { ascending: true });
 
-    // If categorySlug is provided and not 'all', filter by category
-    if (categorySlug && categorySlug !== 'all') {
-      // First get the category ID
-      const { data: category } = await supabase
-        .from('menu_categories')
-        .select('id')
-        .eq('client_id', clientId)
-        .eq('slug', categorySlug)
-        .single();
-
-      if (category) {
-        query = query.eq('category_id', category.id);
-      }
+    if (isFilteredCategory) {
+      query = query.eq('category.slug', categorySlug as string);
     }
 
     const { data, error } = await query;
@@ -200,7 +224,7 @@ export const getMenuFeaturedItems = cache(async (clientId: string) => {
 
   const { data, error } = await supabase
     .from('menu_featured_items')
-    .select('*')
+    .select(MENU_FEATURED_ITEM_SELECT)
     .eq('client_id', clientId)
     .eq('is_active', true)
     .order('sort_order', { ascending: true });
