@@ -51,25 +51,36 @@ export default function LandingPage() {
           }`}
         />
 
-        {/* Premium grid texture */}
+        {/* Premium chess-grid texture */}
         <div
-          className={`absolute inset-0 ${isDark ? 'opacity-45' : 'opacity-70'}`}
+          className={`absolute inset-0 ${isDark ? 'opacity-70' : 'opacity-90'}`}
           style={{
             backgroundImage: isDark
-              ? 'linear-gradient(to right, rgba(148,163,184,0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,0.12) 1px, transparent 1px)'
-              : 'linear-gradient(to right, rgba(15,23,42,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.06) 1px, transparent 1px)',
-            backgroundSize: '44px 44px',
+              ? [
+                  'linear-gradient(to right, rgba(148,163,184,0.16) 1px, transparent 1px)',
+                  'linear-gradient(to bottom, rgba(148,163,184,0.16) 1px, transparent 1px)',
+                  'linear-gradient(45deg, rgba(56,189,248,0.055) 25%, transparent 25%, transparent 75%, rgba(56,189,248,0.055) 75%, rgba(56,189,248,0.055))',
+                  'linear-gradient(45deg, rgba(249,115,22,0.05) 25%, transparent 25%, transparent 75%, rgba(249,115,22,0.05) 75%, rgba(249,115,22,0.05))',
+                ].join(',')
+              : [
+                  'linear-gradient(to right, rgba(15,23,42,0.09) 1px, transparent 1px)',
+                  'linear-gradient(to bottom, rgba(15,23,42,0.09) 1px, transparent 1px)',
+                  'linear-gradient(45deg, rgba(59,130,246,0.05) 25%, transparent 25%, transparent 75%, rgba(59,130,246,0.05) 75%, rgba(59,130,246,0.05))',
+                  'linear-gradient(45deg, rgba(251,146,60,0.055) 25%, transparent 25%, transparent 75%, rgba(251,146,60,0.055) 75%, rgba(251,146,60,0.055))',
+                ].join(','),
+            backgroundSize: '48px 48px, 48px 48px, 96px 96px, 96px 96px',
+            backgroundPosition: 'center center, center center, 0 0, 48px 48px',
             maskImage:
-              'radial-gradient(ellipse at center, black 45%, transparent 92%)',
+              'radial-gradient(ellipse at center, black 56%, rgba(0,0,0,0.92) 68%, transparent 96%)',
           }}
         />
 
         <div
-          className={`absolute inset-0 ${isDark ? 'opacity-90' : 'opacity-70'}`}
+          className={`absolute inset-0 ${isDark ? 'opacity-95' : 'opacity-80'}`}
           style={{
             background: isDark
-              ? 'radial-gradient(circle at 50% 20%, rgba(14,165,233,0.12), transparent 35%), radial-gradient(circle at 70% 65%, rgba(249,115,22,0.1), transparent 38%)'
-              : 'radial-gradient(circle at 50% 20%, rgba(251,146,60,0.15), transparent 35%), radial-gradient(circle at 70% 65%, rgba(59,130,246,0.08), transparent 38%)',
+              ? 'radial-gradient(circle at 20% 12%, rgba(56,189,248,0.16), transparent 36%), radial-gradient(circle at 82% 30%, rgba(129,140,248,0.12), transparent 32%), radial-gradient(circle at 70% 78%, rgba(249,115,22,0.14), transparent 38%)'
+              : 'radial-gradient(circle at 20% 12%, rgba(56,189,248,0.1), transparent 34%), radial-gradient(circle at 82% 30%, rgba(251,146,60,0.15), transparent 32%), radial-gradient(circle at 70% 78%, rgba(59,130,246,0.09), transparent 38%)',
           }}
         />
 
